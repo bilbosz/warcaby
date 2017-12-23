@@ -1,0 +1,233 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{2373D21A-FBA8-46DD-B720-E286DBD060C8}</ProjectGuid>
+    <RootNamespace>Warcaby</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ExecutablePath>$(VC_ExecutablePath_x86);$(WindowsSDK_ExecutablePath);$(VS_ExecutablePath);$(MSBuild_ExecutablePath);$(SystemRoot)\SysWow64;$(FxCopDir);$(PATH)</ExecutablePath>
+    <ReferencePath>$(VC_ReferencesPath_x86);</ReferencePath>
+    <IntDir>build\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ExecutablePath>$(VC_ExecutablePath_x86);$(WindowsSDK_ExecutablePath);$(VS_ExecutablePath);$(MSBuild_ExecutablePath);$(SystemRoot)\SysWow64;$(FxCopDir);$(PATH)</ExecutablePath>
+    <ReferencePath>$(VC_ReferencesPath_x86);</ReferencePath>
+    <IntDir>build\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>false</SDLCheck>
+      <AdditionalIncludeDirectories>D:\Library\boost_1_61_0;D:\Library\SFML-2.4.1\include;D:\Library\SDL2-2.0.7\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>D:\Library\boost_1_61_0\stage\lib;D:\Library\SFML-2.4.1\lib;D:\Library\SDL2-2.0.7\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>sfml-graphics-d.lib;sfml-window-d.lib;sfml-system-d.lib;SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>false</SDLCheck>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>false</SDLCheck>
+      <AdditionalIncludeDirectories>D:\Library\boost_1_61_0;D:\Library\SFML-2.4.1\include;D:\Library\SDL2-2.0.7\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>sfml-graphics.lib;sfml-window.lib;sfml-system.lib;SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\Library\boost_1_61_0\stage\lib;D:\Library\SFML-2.4.1\lib;D:\Library\SDL2-2.0.7\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>false</SDLCheck>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Board.cpp" />
+    <ClCompile Include="src\Draughts.cpp" />
+    <ClCompile Include="src\Error.cpp" />
+    <ClCompile Include="src\Field.cpp" />
+    <ClCompile Include="src\Game.cpp" />
+    <ClCompile Include="src\GameObject.cpp" />
+    <ClCompile Include="src\GameRunner.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\NotImplementedError.cpp" />
+    <ClCompile Include="src\Piece.cpp" />
+    <ClCompile Include="src\Player.cpp" />
+    <ClCompile Include="src\Resources.cpp" />
+    <ClCompile Include="src\SingleThreadGameRunner.cpp" />
+    <ClCompile Include="src\Turn.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Board.h" />
+    <ClInclude Include="src\Draughts.h" />
+    <ClInclude Include="src\Error.h" />
+    <ClInclude Include="src\Field.h" />
+    <ClInclude Include="src\Game.h" />
+    <ClInclude Include="src\GameObject.h" />
+    <ClInclude Include="src\GameRunner.h" />
+    <ClInclude Include="src\Macros.h" />
+    <ClInclude Include="src\NotImplementedError.h" />
+    <ClInclude Include="src\Piece.h" />
+    <ClInclude Include="src\Player.h" />
+    <ClInclude Include="src\Resources.h" />
+    <ClInclude Include="src\SingleThreadGameRunner.h" />
+    <ClInclude Include="src\Turn.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".clang-format" />
+    <None Include="dll\sfml-audio-2.dll" />
+    <None Include="dll\sfml-audio-d-2.dll" />
+    <None Include="dll\sfml-graphics-2.dll" />
+    <None Include="dll\sfml-graphics-d-2.dll" />
+    <None Include="dll\sfml-network-2.dll" />
+    <None Include="dll\sfml-network-d-2.dll" />
+    <None Include="dll\sfml-system-2.dll" />
+    <None Include="dll\sfml-system-d-2.dll" />
+    <None Include="dll\sfml-window-2.dll" />
+    <None Include="dll\sfml-window-d-2.dll" />
+    <None Include="doc\doxygen.conf" />
+    <None Include="README.md" />
+    <None Include="TODO.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="img\logo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="font\antt-ttf\AntykwaTorunska-Bold.ttf" />
+    <Font Include="font\antt-ttf\AntykwaTorunska-BoldItalic.ttf" />
+    <Font Include="font\antt-ttf\AntykwaTorunska-Italic.ttf" />
+    <Font Include="font\antt-ttf\AntykwaTorunska-Regular.ttf" />
+    <Font Include="font\antt-ttf\AntykwaTorunskaCond-Bold.ttf" />
+    <Font Include="font\antt-ttf\AntykwaTorunskaCond-BoldItalic.ttf" />
+    <Font Include="font\antt-ttf\AntykwaTorunskaCond-Italic.ttf" />
+    <Font Include="font\antt-ttf\AntykwaTorunskaCond-Regular.ttf" />
+    <Font Include="font\antt-ttf\AntykwaTorunskaCondLight-Italic.ttf" />
+    <Font Include="font\antt-ttf\AntykwaTorunskaCondLight-Regular.ttf" />
+    <Font Include="font\antt-ttf\AntykwaTorunskaCondMed-Italic.ttf" />
+    <Font Include="font\antt-ttf\AntykwaTorunskaCondMed-Regular.ttf" />
+    <Font Include="font\antt-ttf\AntykwaTorunskaLight-Italic.ttf" />
+    <Font Include="font\antt-ttf\AntykwaTorunskaLight-Regular.ttf" />
+    <Font Include="font\antt-ttf\AntykwaTorunskaMed-Italic.ttf" />
+    <Font Include="font\antt-ttf\AntykwaTorunskaMed-Regular.ttf" />
+    <Font Include="font\Arimo\Arimo-Bold.ttf" />
+    <Font Include="font\Arimo\Arimo-BoldItalic.ttf" />
+    <Font Include="font\Arimo\Arimo-Italic.ttf" />
+    <Font Include="font\Arimo\Arimo-Regular.ttf" />
+    <Font Include="font\Courier New\cour.ttf" />
+    <Font Include="font\Courier New\courbd.ttf" />
+    <Font Include="font\Courier New\courbi.ttf" />
+    <Font Include="font\Courier New\couri.ttf" />
+    <Font Include="font\Droid_Sans\DroidSans-Bold.ttf" />
+    <Font Include="font\Droid_Sans\DroidSans.ttf" />
+    <Font Include="font\Space_Mono\SpaceMono-Bold.ttf" />
+    <Font Include="font\Space_Mono\SpaceMono-BoldItalic.ttf" />
+    <Font Include="font\Space_Mono\SpaceMono-Italic.ttf" />
+    <Font Include="font\Space_Mono\SpaceMono-Regular.ttf" />
+    <Font Include="font\Titillium_Web\TitilliumWeb-Black.ttf" />
+    <Font Include="font\Titillium_Web\TitilliumWeb-Bold.ttf" />
+    <Font Include="font\Titillium_Web\TitilliumWeb-BoldItalic.ttf" />
+    <Font Include="font\Titillium_Web\TitilliumWeb-ExtraLight.ttf" />
+    <Font Include="font\Titillium_Web\TitilliumWeb-ExtraLightItalic.ttf" />
+    <Font Include="font\Titillium_Web\TitilliumWeb-Italic.ttf" />
+    <Font Include="font\Titillium_Web\TitilliumWeb-Light.ttf" />
+    <Font Include="font\Titillium_Web\TitilliumWeb-LightItalic.ttf" />
+    <Font Include="font\Titillium_Web\TitilliumWeb-Regular.ttf" />
+    <Font Include="font\Titillium_Web\TitilliumWeb-SemiBold.ttf" />
+    <Font Include="font\Titillium_Web\TitilliumWeb-SemiBoldItalic.ttf" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

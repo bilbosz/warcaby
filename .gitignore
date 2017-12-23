@@ -1,0 +1,39 @@
+# # exclude everything except directory foo/bar
+# /*
+# !/foo
+# /foo/*
+# !/foo/bar
+
+# ignoruj wszystko
+/*
+
+# oprócz wskazanych plików
+!/.clang-format
+!/.gitignore
+!/README.md
+!/TODO.md
+!/Warcaby.vcxproj
+!/Warcaby.vcxproj.filters
+!/Warcaby.vcxproj.user
+
+# i wskazanych folderów
+# build, bez zawartoœci
+!/build/
+/build/*
+
+# doc jedynie ze wskazanymi plikami
+!/doc/
+/doc/*
+!/doc/doxygen.conf
+
+# lib z zawartoœci¹
+!/lib/
+!/lib/**
+
+# res z zawartoœci¹
+!/res/
+!/res/**
+
+# src z zawartoœci¹
+!/src/
+!/src/**

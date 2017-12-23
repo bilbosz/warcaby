@@ -1,0 +1,279 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{90b2211b-33c2-454a-ae84-8c57c2e0bbb0}</UniqueIdentifier>
+      <Extensions>c;cpp</Extensions>
+    </Filter>
+    <Filter Include="Images">
+      <UniqueIdentifier>{65580185-58f0-44a0-a170-bd67ecc5e1e6}</UniqueIdentifier>
+      <Extensions>png;jpg;jpeg;bmp</Extensions>
+    </Filter>
+    <Filter Include="Fonts">
+      <UniqueIdentifier>{7047ad41-740e-4139-95b7-0eb3279cfb40}</UniqueIdentifier>
+      <Extensions>ttf</Extensions>
+    </Filter>
+    <Filter Include="Dynamic-Link Libraries">
+      <UniqueIdentifier>{86d988fe-aa7e-4ce5-9b6b-ad15d0e7fef1}</UniqueIdentifier>
+      <Extensions>dll</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Board.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Draughts.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Error.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Field.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Game.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GameObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GameRunner.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\NotImplementedError.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Piece.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Player.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Resources.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SingleThreadGameRunner.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Turn.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Board.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Draughts.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Error.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Field.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Game.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GameObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GameRunner.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Macros.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\NotImplementedError.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Piece.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Player.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Resources.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SingleThreadGameRunner.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Turn.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".clang-format" />
+    <None Include="README.md" />
+    <None Include="TODO.md" />
+    <None Include="doc\doxygen.conf" />
+    <None Include="dll\sfml-audio-2.dll">
+      <Filter>Dynamic-Link Libraries</Filter>
+    </None>
+    <None Include="dll\sfml-audio-d-2.dll">
+      <Filter>Dynamic-Link Libraries</Filter>
+    </None>
+    <None Include="dll\sfml-graphics-2.dll">
+      <Filter>Dynamic-Link Libraries</Filter>
+    </None>
+    <None Include="dll\sfml-graphics-d-2.dll">
+      <Filter>Dynamic-Link Libraries</Filter>
+    </None>
+    <None Include="dll\sfml-network-2.dll">
+      <Filter>Dynamic-Link Libraries</Filter>
+    </None>
+    <None Include="dll\sfml-network-d-2.dll">
+      <Filter>Dynamic-Link Libraries</Filter>
+    </None>
+    <None Include="dll\sfml-system-2.dll">
+      <Filter>Dynamic-Link Libraries</Filter>
+    </None>
+    <None Include="dll\sfml-system-d-2.dll">
+      <Filter>Dynamic-Link Libraries</Filter>
+    </None>
+    <None Include="dll\sfml-window-2.dll">
+      <Filter>Dynamic-Link Libraries</Filter>
+    </None>
+    <None Include="dll\sfml-window-d-2.dll">
+      <Filter>Dynamic-Link Libraries</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="img\logo.png">
+      <Filter>Images</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="font\Courier New\cour.ttf">
+      <Filter>Fonts</Filter>
+    </Font>
+    <Font Include="font\Courier New\courbd.ttf">
+      <Filter>Fonts</Filter>
+    </Font>
+    <Font Include="font\Courier New\courbi.ttf">
+      <Filter>Fonts</Filter>
+    </Font>
+    <Font Include="font\Courier New\couri.ttf">
+      <Filter>Fonts</Filter>
+    </Font>
+    <Font Include="font\Droid_Sans\DroidSans.ttf">
+      <Filter>Fonts</Filter>
+    </Font>
+    <Font Include="font\Droid_Sans\DroidSans-Bold.ttf">
+      <Filter>Fonts</Filter>
+    </Font>
+    <Font Include="font\Space_Mono\SpaceMono-Bold.ttf">
+      <Filter>Fonts</Filter>
+    </Font>
+    <Font Include="font\Space_Mono\SpaceMono-BoldItalic.ttf">
+      <Filter>Fonts</Filter>
+    </Font>
+    <Font Include="font\Space_Mono\SpaceMono-Italic.ttf">
+      <Filter>Fonts</Filter>
+    </Font>
+    <Font Include="font\Space_Mono\SpaceMono-Regular.ttf">
+      <Filter>Fonts</Filter>
+    </Font>
+    <Font Include="font\antt-ttf\AntykwaTorunska-Regular.ttf">
+      <Filter>Fonts</Filter>
+    </Font>
+    <Font Include="font\antt-ttf\AntykwaTorunska-Bold.ttf">
+      <Filter>Fonts</Filter>
+    </Font>
+    <Font Include="font\antt-ttf\AntykwaTorunska-BoldItalic.ttf">
+      <Filter>Fonts</Filter>
+    </Font>
+    <Font Include="font\antt-ttf\AntykwaTorunskaCond-Bold.ttf">
+      <Filter>Fonts</Filter>
+    </Font>
+    <Font Include="font\antt-ttf\AntykwaTorunskaCond-BoldItalic.ttf">
+      <Filter>Fonts</Filter>
+    </Font>
+    <Font Include="font\antt-ttf\AntykwaTorunskaCond-Italic.ttf">
+      <Filter>Fonts</Filter>
+    </Font>
+    <Font Include="font\antt-ttf\AntykwaTorunskaCondLight-Italic.ttf">
+      <Filter>Fonts</Filter>
+    </Font>
+    <Font Include="font\antt-ttf\AntykwaTorunskaCondLight-Regular.ttf">
+      <Filter>Fonts</Filter>
+    </Font>
+    <Font Include="font\antt-ttf\AntykwaTorunskaCondMed-Italic.ttf">
+      <Filter>Fonts</Filter>
+    </Font>
+    <Font Include="font\antt-ttf\AntykwaTorunskaCondMed-Regular.ttf">
+      <Filter>Fonts</Filter>
+    </Font>
+    <Font Include="font\antt-ttf\AntykwaTorunskaCond-Regular.ttf">
+      <Filter>Fonts</Filter>
+    </Font>
+    <Font Include="font\antt-ttf\AntykwaTorunska-Italic.ttf">
+      <Filter>Fonts</Filter>
+    </Font>
+    <Font Include="font\antt-ttf\AntykwaTorunskaLight-Italic.ttf">
+      <Filter>Fonts</Filter>
+    </Font>
+    <Font Include="font\antt-ttf\AntykwaTorunskaLight-Regular.ttf">
+      <Filter>Fonts</Filter>
+    </Font>
+    <Font Include="font\antt-ttf\AntykwaTorunskaMed-Italic.ttf">
+      <Filter>Fonts</Filter>
+    </Font>
+    <Font Include="font\antt-ttf\AntykwaTorunskaMed-Regular.ttf">
+      <Filter>Fonts</Filter>
+    </Font>
+    <Font Include="font\Arimo\Arimo-Bold.ttf">
+      <Filter>Fonts</Filter>
+    </Font>
+    <Font Include="font\Arimo\Arimo-BoldItalic.ttf">
+      <Filter>Fonts</Filter>
+    </Font>
+    <Font Include="font\Arimo\Arimo-Italic.ttf">
+      <Filter>Fonts</Filter>
+    </Font>
+    <Font Include="font\Arimo\Arimo-Regular.ttf">
+      <Filter>Fonts</Filter>
+    </Font>
+    <Font Include="font\Titillium_Web\TitilliumWeb-Black.ttf">
+      <Filter>Fonts</Filter>
+    </Font>
+    <Font Include="font\Titillium_Web\TitilliumWeb-Bold.ttf">
+      <Filter>Fonts</Filter>
+    </Font>
+    <Font Include="font\Titillium_Web\TitilliumWeb-BoldItalic.ttf">
+      <Filter>Fonts</Filter>
+    </Font>
+    <Font Include="font\Titillium_Web\TitilliumWeb-ExtraLight.ttf">
+      <Filter>Fonts</Filter>
+    </Font>
+    <Font Include="font\Titillium_Web\TitilliumWeb-ExtraLightItalic.ttf">
+      <Filter>Fonts</Filter>
+    </Font>
+    <Font Include="font\Titillium_Web\TitilliumWeb-Italic.ttf">
+      <Filter>Fonts</Filter>
+    </Font>
+    <Font Include="font\Titillium_Web\TitilliumWeb-Light.ttf">
+      <Filter>Fonts</Filter>
+    </Font>
+    <Font Include="font\Titillium_Web\TitilliumWeb-LightItalic.ttf">
+      <Filter>Fonts</Filter>
+    </Font>
+    <Font Include="font\Titillium_Web\TitilliumWeb-Regular.ttf">
+      <Filter>Fonts</Filter>
+    </Font>
+    <Font Include="font\Titillium_Web\TitilliumWeb-SemiBold.ttf">
+      <Filter>Fonts</Filter>
+    </Font>
+    <Font Include="font\Titillium_Web\TitilliumWeb-SemiBoldItalic.ttf">
+      <Filter>Fonts</Filter>
+    </Font>
+  </ItemGroup>
+</Project>
