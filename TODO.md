@@ -1,24 +1,30 @@
 # Rzeczy do zrobienia
----
 * Logika gry
-  * Zamieniæ <code>Turn</code> na drzewa decyzyjne
+  - [x] ZamieniÄ‡ <code>Turn</code> na drzewa decyzyjne
+  - [ ] PokazaÄ‡ czyj ruch
+* Tekstury:
+  - [ ] Pion i damka
+  - [ ] Pola biaÅ‚e i czarne
+  - [ ] TÅ‚o
+  - [ ] Pole pod warcabownicÄ…
 * Animacje:
-  * EasingCurves
-  * Transitions
+  - [ ] EasingCurves
+  - [ ] Transitions
 * Refaktoring:
-  * Sta³e <code>1</code> -> <code>1U</code>, <code>0.5</code> -> <code>0.5f</code>
-  * Przenieœæ wszystkie sta³e, kolory, itp. do przestrzeni nazw Resources
-* Dokumentacja
-* DŸwiêki:
-  * Przesuwanie bierek
+   - [ ] StaÅ‚e <code>1</code> -> <code>1U</code>, <code>0.5</code> -> <code>0.5f</code>
+   - [ ] PrzenieÅ›Ä‡ wszystkie staÅ‚e, kolory, itp. do przestrzeni nazw Resources
+- [ ] Dokumentacja
+* DÅºwiÄ™ki:
+  - [ ] Przesuwanie bierek
+  - [ ] Bicie
+  - [ ] DÅºwiÄ™ki w menu
+  - [ ] Koniec gry
 * Menu:
   * Gra:
-    * Z cz³owiekiem
-      * Przez sieæ
-      * Na jednym komputerze
-    * Z graczem komputerowym
-* Anulowanie i cofanie ruchów
-* Zapisywanie i odczytywanie stanu gry(najlepiej z i do pliku zgodnego z _[.PDN](https://en.wikipedia.org/wiki/Portable_Draughts_Notation "Portable Draughts Notation")_ )
-* Plik z ustawieniami _config.ini_ (boost ma parsowanie plików _.ini_ oraz _.conf_)
-* Gra z komputerem
-* Gra sieciowa
+    * Z czÅ‚owiekiem
+      - [ ] Przez sieÄ‡
+      - [ ] Na jednym komputerze
+    - [ ] Z graczem komputerowym
+- [ ] Anulowanie i cofanie ruchÃ³w
+- [ ] Zapisywanie i odczytywanie stanu gry(najlepiej z i do pliku zgodnego z _[.PDN](https://en.wikipedia.org/wiki/Portable_Draughts_Notation "Portable Draughts Notation")_ )
+- [ ] Plik z ustawieniami _config.ini_ (boost ma parsowanie plikÃ³w _.ini_ oraz _.conf_)
