@@ -1,4 +1,4 @@
-#include "NotImplementedError.h"
+﻿#include "NotImplementedError.h"
 
 NotImplementedError::NotImplementedError() : Error("Not implemented error") {}
 

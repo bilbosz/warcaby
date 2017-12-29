@@ -62,7 +62,7 @@
     <ClCompile Include="src\SingleThreadGameRunner.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Turn.cpp">
+    <ClCompile Include="src\StepTree.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -106,7 +106,7 @@
     <ClInclude Include="src\SingleThreadGameRunner.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Turn.h">
+    <ClInclude Include="src\StepTree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

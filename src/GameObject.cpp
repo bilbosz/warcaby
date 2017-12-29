@@ -1,4 +1,4 @@
-#include "GameObject.h"
+﻿#include "GameObject.h"
 
 GameObject::GameObject() : size(), fontScaleFactor(1.0f) {}
 

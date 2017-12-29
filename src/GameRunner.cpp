@@ -1,4 +1,4 @@
-#include "GameRunner.h"
+﻿#include "GameRunner.h"
 
 GameRunner::GameRunner(Game *game) : game(game) {}
 

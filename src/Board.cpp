@@ -1,4 +1,4 @@
-#include "Board.h"
+﻿#include "Board.h"
 #include "NotImplementedError.h"
 #include "Player.h"
 
@@ -106,6 +106,18 @@ Field *Board::getFieldByPosition(const sf::Vector2f &position) const
 Field *Board::getFieldByBoardPosition(const sf::Vector2i &position) const
 {
     return fields[position.y][position.x];
+}
+
+Field *Board::getFieldByName(const std::string &name) const
+{
+    for (uint16_t y = 0; y < sideFieldsNumber; ++y) {
+        for (uint16_t x = 0; x < sideFieldsNumber; ++x) {
+            Field *field = fields[y][x];
+            if (field->getName() == name)
+                return field;
+        }
+    }
+    return nullptr;
 }
 
 void Board::clearSelection()
