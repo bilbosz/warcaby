@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Field.h"
 #include "GameObject.h"
 #include "Piece.h"
@@ -23,6 +23,7 @@ public:
     std::list<Field *> getFieldsByColor(Field::Color color) const;
     Field *getFieldByPosition(const sf::Vector2f &position) const;
     Field *getFieldByBoardPosition(const sf::Vector2i &position) const;
+    Field *getFieldByName(const std::string &name) const;
 
     void clearSelection();
 

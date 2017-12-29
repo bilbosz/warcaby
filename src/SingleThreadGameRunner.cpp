@@ -1,4 +1,4 @@
-#include "SingleThreadGameRunner.h"
+﻿#include "SingleThreadGameRunner.h"
 #include "NotImplementedError.h"
 
 #include <iostream>

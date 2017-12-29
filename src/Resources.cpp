@@ -1,4 +1,4 @@
-#include <filesystem>
+﻿#include <filesystem>
 
 #include "Error.h"
 #include "Resources.h"

@@ -25,6 +25,10 @@
 !/doc/
 /doc/*
 !/doc/doxygen.conf
+!/doc/cppreference-doxygen-web.tag.xml
+!/doc/footer.html
+!/doc/header.html
+!/doc/sfml-doxygen-web.tag.xml
 
 # lib z zawartoœci¹
 !/lib/

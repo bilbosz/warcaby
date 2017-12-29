@@ -1,4 +1,4 @@
-#include "Piece.h"
+﻿#include "Piece.h"
 #include "NotImplementedError.h"
 #include "Resources.h"
 
@@ -51,7 +51,7 @@ void Piece::draw(sf::RenderTarget &renderTarget, sf::RenderStates states) const
     renderTarget.draw(pieceShape, states);
     if (pieceType == PieceType::King)
         renderTarget.draw(crownShape, states);
-     //renderTarget.draw(descriptionText, states);
+    //renderTarget.draw(descriptionText, states);
 }
 
 void Piece::setPosition(const sf::Vector2f &position)

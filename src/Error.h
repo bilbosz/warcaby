@@ -1,16 +1,16 @@
-#pragma once
+﻿#pragma once
 
 #include <string>
 
 class Error
 {
 public:
-	Error();
-	Error(std::string message);
-	virtual ~Error();
+    Error();
+    Error(std::string message);
+    virtual ~Error();
 
-	std::string getMessage() const;
+    std::string getMessage() const;
 
 protected:
-	std::string message;
+    std::string message;
 };

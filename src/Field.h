@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "GameObject.h"
 #include "Piece.h"
@@ -29,6 +29,8 @@ public:
     Highlight getHighlight() const;
 
     sf::Rect<float> getBoundaries() const;
+
+    const std::string &getName() const;
 
     Field::Color getColor() const;
 

@@ -1,4 +1,4 @@
-#include "Draughts.h"
+﻿#include "Draughts.h"
 #include "GameRunner.h"
 #include "Resources.h"
 #include "SingleThreadGameRunner.h"

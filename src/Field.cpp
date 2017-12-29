@@ -1,4 +1,4 @@
-#include "Field.h"
+﻿#include "Field.h"
 #include "NotImplementedError.h"
 #include "Resources.h"
 
@@ -107,6 +107,11 @@ sf::Rect<float> Field::getBoundaries() const
 {
     sf::Vector2f pos = getPosition();
     return sf::Rect<float>(pos.x, pos.y, size.x, size.y);
+}
+
+const std::string &Field::getName() const
+{
+    return fieldName;
 }
 
 Field::Color Field::getColor() const
