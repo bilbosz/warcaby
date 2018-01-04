@@ -1,7 +1,4 @@
 ﻿#include "SingleThreadGameRunner.h"
-#include "NotImplementedError.h"
-
-#include <iostream>
 
 SingleThreadGameRunner::SingleThreadGameRunner(Game *game, uint16_t updateRate) :
     GameRunner(game),
@@ -30,7 +27,7 @@ void SingleThreadGameRunner::run()
 
     while (true) {
         measureBeforeUpdate = now();
-        game->update(nextUpdate - lastUpdate);
+        game->update(nextUpdate);
         if (game->shouldFinish())
             break;
         measureAfterUpdate = now();

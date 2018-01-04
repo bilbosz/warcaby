@@ -136,6 +136,7 @@
   <ItemGroup>
     <ClCompile Include="src\Board.cpp" />
     <ClCompile Include="src\Draughts.cpp" />
+    <ClCompile Include="src\EasingCurve.cpp" />
     <ClCompile Include="src\Error.cpp" />
     <ClCompile Include="src\Field.cpp" />
     <ClCompile Include="src\Game.cpp" />
@@ -148,10 +149,12 @@
     <ClCompile Include="src\Resources.cpp" />
     <ClCompile Include="src\SingleThreadGameRunner.cpp" />
     <ClCompile Include="src\StepTree.cpp" />
+    <ClCompile Include="src\Transition.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Board.h" />
     <ClInclude Include="src\Draughts.h" />
+    <ClInclude Include="src\EasingCurve.h" />
     <ClInclude Include="src\Error.h" />
     <ClInclude Include="src\Field.h" />
     <ClInclude Include="src\Game.h" />
@@ -164,68 +167,31 @@
     <ClInclude Include="src\Resources.h" />
     <ClInclude Include="src\SingleThreadGameRunner.h" />
     <ClInclude Include="src\StepTree.h" />
+    <ClInclude Include="src\Transition.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />
-    <None Include="dll\sfml-audio-2.dll" />
-    <None Include="dll\sfml-audio-d-2.dll" />
-    <None Include="dll\sfml-graphics-2.dll" />
-    <None Include="dll\sfml-graphics-d-2.dll" />
-    <None Include="dll\sfml-network-2.dll" />
-    <None Include="dll\sfml-network-d-2.dll" />
-    <None Include="dll\sfml-system-2.dll" />
-    <None Include="dll\sfml-system-d-2.dll" />
-    <None Include="dll\sfml-window-2.dll" />
-    <None Include="dll\sfml-window-d-2.dll" />
+    <None Include="ClassDiagram.cd" />
     <None Include="doc\doxygen.conf" />
+    <None Include="lib\sfml-audio-2.dll" />
+    <None Include="lib\sfml-audio-d-2.dll" />
+    <None Include="lib\sfml-graphics-2.dll" />
+    <None Include="lib\sfml-graphics-d-2.dll" />
+    <None Include="lib\sfml-network-2.dll" />
+    <None Include="lib\sfml-network-d-2.dll" />
+    <None Include="lib\sfml-system-2.dll" />
+    <None Include="lib\sfml-system-d-2.dll" />
+    <None Include="lib\sfml-window-2.dll" />
+    <None Include="lib\sfml-window-d-2.dll" />
     <None Include="README.md" />
     <None Include="TODO.md" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="img\logo.png" />
+    <Font Include="res\font\antt-ttf\AntykwaTorunska-Regular.ttf" />
+    <Font Include="res\font\Courier New\cour.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <Font Include="font\antt-ttf\AntykwaTorunska-Bold.ttf" />
-    <Font Include="font\antt-ttf\AntykwaTorunska-BoldItalic.ttf" />
-    <Font Include="font\antt-ttf\AntykwaTorunska-Italic.ttf" />
-    <Font Include="font\antt-ttf\AntykwaTorunska-Regular.ttf" />
-    <Font Include="font\antt-ttf\AntykwaTorunskaCond-Bold.ttf" />
-    <Font Include="font\antt-ttf\AntykwaTorunskaCond-BoldItalic.ttf" />
-    <Font Include="font\antt-ttf\AntykwaTorunskaCond-Italic.ttf" />
-    <Font Include="font\antt-ttf\AntykwaTorunskaCond-Regular.ttf" />
-    <Font Include="font\antt-ttf\AntykwaTorunskaCondLight-Italic.ttf" />
-    <Font Include="font\antt-ttf\AntykwaTorunskaCondLight-Regular.ttf" />
-    <Font Include="font\antt-ttf\AntykwaTorunskaCondMed-Italic.ttf" />
-    <Font Include="font\antt-ttf\AntykwaTorunskaCondMed-Regular.ttf" />
-    <Font Include="font\antt-ttf\AntykwaTorunskaLight-Italic.ttf" />
-    <Font Include="font\antt-ttf\AntykwaTorunskaLight-Regular.ttf" />
-    <Font Include="font\antt-ttf\AntykwaTorunskaMed-Italic.ttf" />
-    <Font Include="font\antt-ttf\AntykwaTorunskaMed-Regular.ttf" />
-    <Font Include="font\Arimo\Arimo-Bold.ttf" />
-    <Font Include="font\Arimo\Arimo-BoldItalic.ttf" />
-    <Font Include="font\Arimo\Arimo-Italic.ttf" />
-    <Font Include="font\Arimo\Arimo-Regular.ttf" />
-    <Font Include="font\Courier New\cour.ttf" />
-    <Font Include="font\Courier New\courbd.ttf" />
-    <Font Include="font\Courier New\courbi.ttf" />
-    <Font Include="font\Courier New\couri.ttf" />
-    <Font Include="font\Droid_Sans\DroidSans-Bold.ttf" />
-    <Font Include="font\Droid_Sans\DroidSans.ttf" />
-    <Font Include="font\Space_Mono\SpaceMono-Bold.ttf" />
-    <Font Include="font\Space_Mono\SpaceMono-BoldItalic.ttf" />
-    <Font Include="font\Space_Mono\SpaceMono-Italic.ttf" />
-    <Font Include="font\Space_Mono\SpaceMono-Regular.ttf" />
-    <Font Include="font\Titillium_Web\TitilliumWeb-Black.ttf" />
-    <Font Include="font\Titillium_Web\TitilliumWeb-Bold.ttf" />
-    <Font Include="font\Titillium_Web\TitilliumWeb-BoldItalic.ttf" />
-    <Font Include="font\Titillium_Web\TitilliumWeb-ExtraLight.ttf" />
-    <Font Include="font\Titillium_Web\TitilliumWeb-ExtraLightItalic.ttf" />
-    <Font Include="font\Titillium_Web\TitilliumWeb-Italic.ttf" />
-    <Font Include="font\Titillium_Web\TitilliumWeb-Light.ttf" />
-    <Font Include="font\Titillium_Web\TitilliumWeb-LightItalic.ttf" />
-    <Font Include="font\Titillium_Web\TitilliumWeb-Regular.ttf" />
-    <Font Include="font\Titillium_Web\TitilliumWeb-SemiBold.ttf" />
-    <Font Include="font\Titillium_Web\TitilliumWeb-SemiBoldItalic.ttf" />
+    <Image Include="res\img\logo.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

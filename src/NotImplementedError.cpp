@@ -1,5 +1,5 @@
 ﻿#include "NotImplementedError.h"
 
-NotImplementedError::NotImplementedError() : Error("Not implemented error") {}
+NotImplementedError::NotImplementedError() : Error("Nie zaimplementowano funkcjonalności") {}
 
 NotImplementedError::~NotImplementedError() {}

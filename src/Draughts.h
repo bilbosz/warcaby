@@ -4,6 +4,7 @@
 #include "Game.h"
 #include "Resources.h"
 #include "StepTree.h"
+#include "Transition.h"
 
 #include "SFML\Graphics.hpp"
 #include "SFML\System.hpp"
@@ -23,17 +24,15 @@ public:
     virtual ~Draughts();
 
     virtual void init() override;
-    virtual void update(sf::Time advance) override;
+    virtual void update(sf::Time time) override;
     virtual void render() override;
 
     virtual bool shouldFinish() const override;
     virtual void finish() override;
 
 private:
-    static const size_t allOffsetsNumber = 4U;
-    static const sf::Vector2i allOffsets[allOffsetsNumber];
-
-    std::mt19937 rng;
+    static const size_t AllOffsetsNumber = 4U;
+    static const sf::Vector2i AllOffsets[AllOffsetsNumber];
 
     sf::RenderWindow renderWindow;
     sf::View view;
@@ -59,6 +58,8 @@ private:
     std::list<Field *> currentTurn;
     std::map<Piece *, StepTree *> possibleTurns;
     StepTree *narrowedTurns;
+
+	std::list<Piece *> captures;
 
     void setPiecesPosition(std::experimental::filesystem::path file = std::experimental::filesystem::path());
 

@@ -1,8 +1,8 @@
 ﻿#pragma once
 
-#include "Field.h"
 #include "GameObject.h"
 #include "Player.h"
+#include "Transition.h"
 
 #include "SFML\Graphics.hpp"
 
@@ -21,11 +21,15 @@ public:
     virtual ~Piece();
 
     virtual void init() override;
-    virtual void update(sf::Time advance) override;
+    virtual void update(sf::Time time) override;
     virtual void draw(sf::RenderTarget &renderTarget, sf::RenderStates states) const override;
 
     void setPosition(const sf::Vector2f &position);
     void setPosition(float x, float y);
+
+    void transistToPosition(const sf::Vector2f &position, sf::Time startTime);
+    void transistToPosition(float x, float y, sf::Time startTime);
+    bool isMovingTransitionRunning() const;
 
     Player::Color getColor() const;
 
@@ -38,9 +42,11 @@ public:
     Field *getCurrentField() const;
 
     PieceType getPieceType() const;
-    void promote();
+    void upgrade();
+    void downgrade();
 
     void hide();
+    void show();
 
 private:
     uint16_t pieceId;
@@ -53,6 +59,8 @@ private:
     sf::CircleShape crownShape;
     bool hidden;
     float fieldMargin;
+
+    Transition xMovingTransition, yMovingTransition;
 
     Field *currentField;
 };

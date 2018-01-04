@@ -1,6 +1,6 @@
 ﻿#include "Error.h"
 
-Error::Error() : message("Unknown error") {}
+Error::Error() : message("Nieznany błąd") {}
 
 Error::Error(std::string message) : message(message) {}
 

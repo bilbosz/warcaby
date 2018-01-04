@@ -1,5 +1,4 @@
 ﻿#include "Field.h"
-#include "NotImplementedError.h"
 #include "Resources.h"
 
 #include "boost\format.hpp"
@@ -13,7 +12,7 @@ Field::Field(uint16_t x, uint16_t y, Color color) :
     highlight(None),
     descriptionText(),
     frameShape(4U),
-    frameThickness(0.1f),
+    frameThickness(Resources::FieldMarginThickness),
     currentPiece(nullptr)
 {
 }
@@ -30,15 +29,15 @@ void Field::init()
     fieldShape.setPoint(2U, sf::Vector2f(1.0f, 1.0f));
     fieldShape.setPoint(3U, sf::Vector2f(0.0f, 1.0f));
 
-    sf::Color color = sf::Color::White;
+    sf::Color color = Resources::WhiteFieldColor;
     if (this->color == Color::Black)
-        color = sf::Color(88U, 44U, 1U);
+        color = Resources::BlackFieldColor;
     fieldShape.setFillColor(color);
 
     fieldName = (boost::format("%c%d") % char(uint16_t('a') + boardPosition.x) % (boardPosition.y + 1)).str();
 
     descriptionText.setFont(Resources::DefaultFont);
-    descriptionText.setFillColor(sf::Color::Blue);
+    descriptionText.setFillColor(Resources::DebugTextColor);
     descriptionText.setString(fieldName);
 
     frameShape.setPoint(0U, sf::Vector2f(frameThickness, frameThickness));
@@ -50,16 +49,15 @@ void Field::init()
     frameShape.setOutlineColor(sf::Color::Transparent);
 }
 
-void Field::update(sf::Time advance)
+void Field::update(sf::Time time)
 {
-    throw NotImplementedError();
+	
 }
 
 void Field::draw(sf::RenderTarget &renderTarget, sf::RenderStates states) const
 {
     renderTarget.draw(fieldShape, states);
     renderTarget.draw(frameShape, states);
-    // renderTarget.draw(descriptionText, states);
 }
 
 void Field::setPosition(const sf::Vector2f &position)
@@ -90,11 +88,11 @@ void Field::setHighlight(Highlight highlight)
     if (highlight == None) {
         frameShape.setOutlineColor(sf::Color::Transparent);
     } else if (highlight == Selected) {
-        frameShape.setOutlineColor(sf::Color::Red);
+        frameShape.setOutlineColor(Resources::SelectedFieldColor);
     } else if (highlight == AvailableMove) {
-        frameShape.setOutlineColor(sf::Color::Blue);
-    } else if (highlight == PreviousMove) {
-        frameShape.setOutlineColor(sf::Color::Green);
+        frameShape.setOutlineColor(Resources::AvailableFieldColor);
+    } else if (highlight == AvailablePiece) {
+        frameShape.setOutlineColor(Resources::AvailablePieceFieldColor);
     }
 }
 
