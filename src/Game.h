@@ -11,11 +11,12 @@ public:
     virtual ~Game();
 
     virtual void init() = 0;
-    virtual void update(sf::Time advance) = 0;
+    virtual void update(sf::Time time);
     virtual void render() = 0;
 
     virtual bool shouldFinish() const = 0;
     virtual void finish() = 0;
 
+	sf::Time gameTime;
     std::ostringstream gameMessages;
 };

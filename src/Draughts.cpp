@@ -1,22 +1,16 @@
 ﻿#include "Draughts.h"
-#include "Macros.h"
-#include "NotImplementedError.h"
+#include "Error.h"
 
+#include <algorithm>
 #include <fstream>
-#include <functional>
-#include <iostream>
-#include <string>
 
-#include "boost\bind.hpp"
-#include "boost\format.hpp"
 #include "boost\tokenizer.hpp"
 
-const sf::Vector2i Draughts::allOffsets[Draughts::allOffsetsNumber] = {
+const sf::Vector2i Draughts::AllOffsets[Draughts::AllOffsetsNumber] = {
     sf::Vector2i(-1, 1), sf::Vector2i(1, 1), sf::Vector2i(1, -1), sf::Vector2i(-1, -1)
 };
 
 Draughts::Draughts() :
-    rng(std::random_device()()),
     renderWindow(),
     view(),
     viewLeftTopCorner(),
@@ -25,16 +19,17 @@ Draughts::Draughts() :
     isFinished_(false),
     gameOver(false),
     winner(),
-    sideFieldsNumber(8U),
-    board(8U),
-    playerPiecesRowsNumber(3U),
+    sideFieldsNumber(Resources::SideFieldsNumber),
+    board(sideFieldsNumber),
+    playerPiecesRowsNumber(Resources::PlayerPiecesRowsNumber),
     piecesNumber(playerPiecesRowsNumber * 2 * sideFieldsNumber / 2),
     pieces(),
-    fieldMargin(0.1f),
+    fieldMargin(Resources::FieldMarginThickness),
     whoseTurn(Player::Color::White),
     currentTurn(),
     possibleTurns(),
-    narrowedTurns()
+    narrowedTurns(),
+    captures()
 {
     pieces = new Piece *[piecesNumber];
     for (uint16_t i = 0U; i < piecesNumber; ++i) {
@@ -55,72 +50,95 @@ Draughts::~Draughts()
 
 void Draughts::init()
 {
-    sf::VideoMode videoMode = sf::VideoMode::getFullscreenModes()[0];
-    std::string title = "Warcaby";
+    sf::VideoMode videoMode = sf::VideoMode::getFullscreenModes()[Resources::VideoModeNumber];
+    std::string title = Resources::GameTitle;
     sf::ContextSettings settings;
-    settings.antialiasingLevel = 2U;
+    settings.antialiasingLevel = Resources::AntialiasingLevel;
+    renderWindow.setVerticalSyncEnabled(Resources::VerticalSync);
+    renderWindow.setKeyRepeatEnabled(Resources::KeyRepeat);
+    renderWindow.setMouseCursorGrabbed(Resources::MouseCursorGrab);
 
-    fontScaleFactor = 10.0f / videoMode.height;
+    float viewHeight = static_cast<float>(sideFieldsNumber) + 2.0f;
 
-    view.setCenter(4.0f, 4.0f);
-    view.setSize(fontScaleFactor * videoMode.width, 10.0f);
+    fontScaleFactor = viewHeight / videoMode.height;
+
+    view.setCenter((viewHeight - 2.0f) / 2.0f, (viewHeight - 2.0f) / 2.0f);
+    view.setSize(fontScaleFactor * videoMode.width, viewHeight);
     view.setViewport(sf::FloatRect(0.0f, 0.0f, 1.0f, 1.0f));
     viewLeftTopCorner.x = view.getCenter().x - view.getSize().x / 2.0f;
     viewLeftTopCorner.y = view.getCenter().y - view.getSize().y / 2.0f;
-
-    renderWindow.setVerticalSyncEnabled(true);
-    renderWindow.setKeyRepeatEnabled(true);
-    renderWindow.setMouseCursorGrabbed(false);
 
     board.init();
     board.setPosition(0.0f, 0.0f);
     board.setFontScaleFactor(fontScaleFactor);
 
     std::list<Field *> blackFields = board.getFieldsByColor(Field::Color::Black);
-    for (uint16_t i = 0; i < piecesNumber; ++i) {
+    for (uint16_t i = 0U; i < piecesNumber; ++i) {
         Piece *piece = pieces[i];
         piece->init();
         piece->setFieldMargin(fieldMargin);
         piece->setFontScaleFactor(fontScaleFactor);
     }
 
-    //
-    setPiecesPosition();
-    /*/
-    setPiecesPosition(R"(C:\Users\bilbosz\Desktop\initboard.txt)");
-    //*/
+    setPiecesPosition(Resources::InitialBoardFile);
 
     overlayText.setPosition(viewLeftTopCorner);
     overlayText.setFont(Resources::DefaultFont);
-    overlayText.setFillColor(sf::Color::Blue);
+    overlayText.setFillColor(Resources::DebugTextColor);
     overlayText.setScale(fontScaleFactor, fontScaleFactor);
+    overlayText.setCharacterSize(60);
 
     addPossibleTurns();
 
     // okno tworzymy jak najpóźniej, ustawiamy widok po stworzeniu okna
-    renderWindow.create(videoMode, title, sf::Style::Fullscreen, settings);
+    renderWindow.create(videoMode, title, Resources::WindowStyle, settings);
     renderWindow.setView(view);
 }
 
-void Draughts::update(sf::Time advance)
+void Draughts::update(sf::Time time)
 {
+    Game::update(time);
     retrieveEvents();
+    board.update(time);
+    for (uint16_t i = 0U; i < piecesNumber; ++i) {
+        Piece *piece = pieces[i];
+        piece->update(time);
+    }
     if (gameOver) {
         if (winner == Player::Color::White)
             overlayText.setString(L"Biały gracz wygrał. Gratulacje!\n");
         else
             overlayText.setString(L"Czarny gracz wygrał. Gratulacje!\n");
-    } else {
-        // overlayText.setString(gameMessages.str());
     }
 }
 
 void Draughts::render()
 {
-    renderWindow.clear(sf::Color(230U, 230U, 230U));
+    renderWindow.clear(Resources::BackgroundColor);
     renderWindow.draw(board);
+    // wszystkie zbite bierki pod spodem
+    for (Piece *capture : captures) {
+        renderWindow.draw(*capture);
+    }
+    // wszystkie bierki, które się nie ruszają
     for (uint16_t i = 0U; i < piecesNumber; ++i) {
-        renderWindow.draw(*pieces[i]);
+        Piece *piece = pieces[i];
+        // bierka jest zbita
+        if (piece->getCurrentField() == nullptr)
+            continue;
+        if (piece->isMovingTransitionRunning())
+            continue;
+        renderWindow.draw(*piece);
+    }
+    // bierki animowane na górze (wyświetlane ostatnie)
+    for (uint16_t i = 0U; i < piecesNumber; ++i) {
+        Piece *piece = pieces[i];
+        // bierka jest zbita
+        if (piece->getCurrentField() == nullptr)
+            continue;
+        if (!piece->isMovingTransitionRunning())
+            continue;
+        renderWindow.draw(*piece);
     }
     renderWindow.draw(overlayText);
     renderWindow.display();
@@ -203,7 +221,7 @@ void Draughts::setPiecesPosition(std::experimental::filesystem::path file)
         field->setCurrentPiece(piece);
         piece->setPosition(field->getPosition());
         if (king)
-            piece->promote();
+            piece->upgrade();
         ++pieceNumber;
     }
 }
@@ -249,7 +267,7 @@ void Draughts::mouseClickedOnBoard(const sf::Vector2f &pressPoint)
         earlierSelectedPiece->setCurrentField(pressedField);
         earlierSelectedField->setCurrentPiece(nullptr);
         pressedField->setCurrentPiece(earlierSelectedPiece);
-        earlierSelectedPiece->setPosition(pressedField->getPosition());
+        earlierSelectedPiece->transistToPosition(pressedField->getPosition(), gameTime);
         // zaznacz pole
         currentTurn.push_back(pressedField);
         narrowTurns();
@@ -326,6 +344,7 @@ void Draughts::addPossibleTurns()
         playerWon();
         return;
     }
+    highlightPossibleSteps();
 }
 
 void Draughts::clearPossibleTurns()
@@ -371,7 +390,7 @@ void Draughts::addPossiblePieceMoves(Piece *piece)
         }
     } else if (pieceType == Piece::PieceType::King) {
         std::list<sf::Vector2i> allDirectionMoves;
-        for (const sf::Vector2i &directionOffset : allOffsets) {
+        for (const sf::Vector2i &directionOffset : AllOffsets) {
             for (int i = 1; i <= sideFieldsNumber; ++i) {
                 sf::Vector2i targetBoardPosition(boardPosition + i * directionOffset);
                 if (board.isBoardPositionInvalid(targetBoardPosition))
@@ -412,7 +431,7 @@ void Draughts::addPossibleManJumps(StepTree *currentStep, std::set<Piece *> &cur
     Field *startField = startPiece->getCurrentField();
     sf::Vector2i lastBoardPosition = currentStep->field->getBoardPostion(),
                  startBoardPosition = startField->getBoardPostion();
-    for (const sf::Vector2i &offset : allOffsets) {
+    for (const sf::Vector2i &offset : AllOffsets) {
         sf::Vector2i attackPosition = lastBoardPosition + offset;
         if (board.isBoardPositionInvalid(attackPosition))
             continue;
@@ -444,13 +463,12 @@ void Draughts::addPossibleManJumps(StepTree *currentStep, std::set<Piece *> &cur
 
 void Draughts::addPossibleKingJumps(StepTree *currentStep, std::set<Piece *> &currentCaptures, Piece *startPiece)
 {
-    // \bug
     Player::Color startColor = startPiece->getColor();
     Field *startField = startPiece->getCurrentField();
     sf::Vector2i lastBoardPosition = currentStep->field->getBoardPostion(),
                  startBoardPosition = startField->getBoardPostion();
     bool break2 = false;
-    for (const sf::Vector2i &offset : allOffsets) {
+    for (const sf::Vector2i &offset : AllOffsets) {
         for (int i = 1; i < sideFieldsNumber; ++i) {
             sf::Vector2i attackPosition = lastBoardPosition + i * offset;
             if (board.isBoardPositionInvalid(attackPosition))
@@ -524,6 +542,22 @@ void Draughts::validatePossibleTurns()
 
 void Draughts::highlightPossibleSteps()
 {
+    if (currentTurn.size() <= 1U) {
+        for (std::pair<Piece *, StepTree *> turnByPiece : possibleTurns) {
+            StepTree *firstStep = turnByPiece.second;
+            bool canMove = false;
+            for (StepTree *secondStep : firstStep->nextStepList) {
+                if (!secondStep->isValid)
+                    continue;
+                canMove = true;
+            }
+            if (!canMove)
+                continue;
+            firstStep->field->setHighlight(Field::Highlight::AvailablePiece);
+        }
+    }
+    if (currentTurn.empty())
+        return;
     Field *currentField = *currentTurn.rbegin();
     currentField->setHighlight(Field::Highlight::Selected);
     for (StepTree *step : narrowedTurns->nextStepList) {
@@ -555,15 +589,17 @@ void Draughts::removeCapturesFromBoard()
 
 void Draughts::removeCapture(Piece *capture)
 {
+    captures.push_back(capture);
     Field *field = capture->getCurrentField();
     field->setCurrentPiece(nullptr);
     capture->setCurrentField(nullptr);
     std::uniform_real_distribution<float> xRandomizer(0.0f, 1.0f);
     std::uniform_real_distribution<float> yRandomizer(-static_cast<float>(sideFieldsNumber) / 4.0f,
                                                       +static_cast<float>(sideFieldsNumber) / 4.0f);
-    capture->setPosition(static_cast<float>(sideFieldsNumber) + 1.0f + xRandomizer(rng),
-                         static_cast<float>(sideFieldsNumber) / 2.0f + yRandomizer(rng));
-    // capture->hide();
+    capture->transistToPosition(
+        static_cast<float>(sideFieldsNumber) + 1.0f + xRandomizer(Resources::RandomNumberGenerator),
+        static_cast<float>(sideFieldsNumber) / 2.0f + yRandomizer(Resources::RandomNumberGenerator),
+        gameTime);
 }
 
 void Draughts::promoteIfPossible()
@@ -572,7 +608,7 @@ void Draughts::promoteIfPossible()
     Field *targetField = (*currentTurn.rbegin());
     Piece *movedPiece = targetField->getCurrentPiece();
     if (targetField->getBoardPostion().y == promotionLine)
-        movedPiece->promote();
+        movedPiece->upgrade();
 }
 
 void Draughts::playerWon()

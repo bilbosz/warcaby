@@ -1,7 +1,6 @@
 ﻿#pragma once
 
 #include "GameObject.h"
-#include "Piece.h"
 
 #include "SFML\Graphics.hpp"
 
@@ -11,13 +10,13 @@ class Field final : public GameObject
 {
 public:
     enum Color { White = 0, Black };
-    enum Highlight { None = 0, Selected, AvailableMove, PreviousMove, HighlightCount };
+    enum Highlight { None = 0, Selected, AvailableMove, AvailablePiece, HighlightCount };
 
     Field(uint16_t x, uint16_t y, Color color);
     virtual ~Field();
 
     virtual void init() override;
-    virtual void update(sf::Time advance) override;
+    virtual void update(sf::Time time) override;
     virtual void draw(sf::RenderTarget &renderTarget, sf::RenderStates states) const override;
 
     void setPosition(const sf::Vector2f &position);

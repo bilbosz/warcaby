@@ -1,11 +1,8 @@
 ﻿#pragma once
+
 #include "Field.h"
 #include "GameObject.h"
-#include "Piece.h"
 
-#include "boost\scoped_array.hpp"
-
-#include <cstdint>
 #include <list>
 
 class Board final : public GameObject
@@ -15,7 +12,7 @@ public:
     virtual ~Board();
 
     virtual void init() override;
-    virtual void update(sf::Time advance) override;
+    virtual void update(sf::Time time) override;
     virtual void draw(sf::RenderTarget &renderTarget, sf::RenderStates states) const override;
 
     void setFontScaleFactor(float scale) override;

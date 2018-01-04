@@ -65,6 +65,12 @@
     <ClCompile Include="src\StepTree.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\EasingCurve.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Transition.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Board.h">
@@ -109,171 +115,61 @@
     <ClInclude Include="src\StepTree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\EasingCurve.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Transition.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".clang-format" />
     <None Include="README.md" />
     <None Include="TODO.md" />
     <None Include="doc\doxygen.conf" />
-    <None Include="dll\sfml-audio-2.dll">
+    <None Include="ClassDiagram.cd" />
+    <None Include="lib\sfml-audio-2.dll">
       <Filter>Dynamic-Link Libraries</Filter>
     </None>
-    <None Include="dll\sfml-audio-d-2.dll">
+    <None Include="lib\sfml-audio-d-2.dll">
       <Filter>Dynamic-Link Libraries</Filter>
     </None>
-    <None Include="dll\sfml-graphics-2.dll">
+    <None Include="lib\sfml-graphics-2.dll">
       <Filter>Dynamic-Link Libraries</Filter>
     </None>
-    <None Include="dll\sfml-graphics-d-2.dll">
+    <None Include="lib\sfml-graphics-d-2.dll">
       <Filter>Dynamic-Link Libraries</Filter>
     </None>
-    <None Include="dll\sfml-network-2.dll">
+    <None Include="lib\sfml-network-2.dll">
       <Filter>Dynamic-Link Libraries</Filter>
     </None>
-    <None Include="dll\sfml-network-d-2.dll">
+    <None Include="lib\sfml-network-d-2.dll">
       <Filter>Dynamic-Link Libraries</Filter>
     </None>
-    <None Include="dll\sfml-system-2.dll">
+    <None Include="lib\sfml-system-2.dll">
       <Filter>Dynamic-Link Libraries</Filter>
     </None>
-    <None Include="dll\sfml-system-d-2.dll">
+    <None Include="lib\sfml-system-d-2.dll">
       <Filter>Dynamic-Link Libraries</Filter>
     </None>
-    <None Include="dll\sfml-window-2.dll">
+    <None Include="lib\sfml-window-2.dll">
       <Filter>Dynamic-Link Libraries</Filter>
     </None>
-    <None Include="dll\sfml-window-d-2.dll">
+    <None Include="lib\sfml-window-d-2.dll">
       <Filter>Dynamic-Link Libraries</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="img\logo.png">
+    <Font Include="res\font\antt-ttf\AntykwaTorunska-Regular.ttf">
+      <Filter>Fonts</Filter>
+    </Font>
+    <Font Include="res\font\Courier New\cour.ttf">
+      <Filter>Fonts</Filter>
+    </Font>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\img\logo.png">
       <Filter>Images</Filter>
     </Image>
-  </ItemGroup>
-  <ItemGroup>
-    <Font Include="font\Courier New\cour.ttf">
-      <Filter>Fonts</Filter>
-    </Font>
-    <Font Include="font\Courier New\courbd.ttf">
-      <Filter>Fonts</Filter>
-    </Font>
-    <Font Include="font\Courier New\courbi.ttf">
-      <Filter>Fonts</Filter>
-    </Font>
-    <Font Include="font\Courier New\couri.ttf">
-      <Filter>Fonts</Filter>
-    </Font>
-    <Font Include="font\Droid_Sans\DroidSans.ttf">
-      <Filter>Fonts</Filter>
-    </Font>
-    <Font Include="font\Droid_Sans\DroidSans-Bold.ttf">
-      <Filter>Fonts</Filter>
-    </Font>
-    <Font Include="font\Space_Mono\SpaceMono-Bold.ttf">
-      <Filter>Fonts</Filter>
-    </Font>
-    <Font Include="font\Space_Mono\SpaceMono-BoldItalic.ttf">
-      <Filter>Fonts</Filter>
-    </Font>
-    <Font Include="font\Space_Mono\SpaceMono-Italic.ttf">
-      <Filter>Fonts</Filter>
-    </Font>
-    <Font Include="font\Space_Mono\SpaceMono-Regular.ttf">
-      <Filter>Fonts</Filter>
-    </Font>
-    <Font Include="font\antt-ttf\AntykwaTorunska-Regular.ttf">
-      <Filter>Fonts</Filter>
-    </Font>
-    <Font Include="font\antt-ttf\AntykwaTorunska-Bold.ttf">
-      <Filter>Fonts</Filter>
-    </Font>
-    <Font Include="font\antt-ttf\AntykwaTorunska-BoldItalic.ttf">
-      <Filter>Fonts</Filter>
-    </Font>
-    <Font Include="font\antt-ttf\AntykwaTorunskaCond-Bold.ttf">
-      <Filter>Fonts</Filter>
-    </Font>
-    <Font Include="font\antt-ttf\AntykwaTorunskaCond-BoldItalic.ttf">
-      <Filter>Fonts</Filter>
-    </Font>
-    <Font Include="font\antt-ttf\AntykwaTorunskaCond-Italic.ttf">
-      <Filter>Fonts</Filter>
-    </Font>
-    <Font Include="font\antt-ttf\AntykwaTorunskaCondLight-Italic.ttf">
-      <Filter>Fonts</Filter>
-    </Font>
-    <Font Include="font\antt-ttf\AntykwaTorunskaCondLight-Regular.ttf">
-      <Filter>Fonts</Filter>
-    </Font>
-    <Font Include="font\antt-ttf\AntykwaTorunskaCondMed-Italic.ttf">
-      <Filter>Fonts</Filter>
-    </Font>
-    <Font Include="font\antt-ttf\AntykwaTorunskaCondMed-Regular.ttf">
-      <Filter>Fonts</Filter>
-    </Font>
-    <Font Include="font\antt-ttf\AntykwaTorunskaCond-Regular.ttf">
-      <Filter>Fonts</Filter>
-    </Font>
-    <Font Include="font\antt-ttf\AntykwaTorunska-Italic.ttf">
-      <Filter>Fonts</Filter>
-    </Font>
-    <Font Include="font\antt-ttf\AntykwaTorunskaLight-Italic.ttf">
-      <Filter>Fonts</Filter>
-    </Font>
-    <Font Include="font\antt-ttf\AntykwaTorunskaLight-Regular.ttf">
-      <Filter>Fonts</Filter>
-    </Font>
-    <Font Include="font\antt-ttf\AntykwaTorunskaMed-Italic.ttf">
-      <Filter>Fonts</Filter>
-    </Font>
-    <Font Include="font\antt-ttf\AntykwaTorunskaMed-Regular.ttf">
-      <Filter>Fonts</Filter>
-    </Font>
-    <Font Include="font\Arimo\Arimo-Bold.ttf">
-      <Filter>Fonts</Filter>
-    </Font>
-    <Font Include="font\Arimo\Arimo-BoldItalic.ttf">
-      <Filter>Fonts</Filter>
-    </Font>
-    <Font Include="font\Arimo\Arimo-Italic.ttf">
-      <Filter>Fonts</Filter>
-    </Font>
-    <Font Include="font\Arimo\Arimo-Regular.ttf">
-      <Filter>Fonts</Filter>
-    </Font>
-    <Font Include="font\Titillium_Web\TitilliumWeb-Black.ttf">
-      <Filter>Fonts</Filter>
-    </Font>
-    <Font Include="font\Titillium_Web\TitilliumWeb-Bold.ttf">
-      <Filter>Fonts</Filter>
-    </Font>
-    <Font Include="font\Titillium_Web\TitilliumWeb-BoldItalic.ttf">
-      <Filter>Fonts</Filter>
-    </Font>
-    <Font Include="font\Titillium_Web\TitilliumWeb-ExtraLight.ttf">
-      <Filter>Fonts</Filter>
-    </Font>
-    <Font Include="font\Titillium_Web\TitilliumWeb-ExtraLightItalic.ttf">
-      <Filter>Fonts</Filter>
-    </Font>
-    <Font Include="font\Titillium_Web\TitilliumWeb-Italic.ttf">
-      <Filter>Fonts</Filter>
-    </Font>
-    <Font Include="font\Titillium_Web\TitilliumWeb-Light.ttf">
-      <Filter>Fonts</Filter>
-    </Font>
-    <Font Include="font\Titillium_Web\TitilliumWeb-LightItalic.ttf">
-      <Filter>Fonts</Filter>
-    </Font>
-    <Font Include="font\Titillium_Web\TitilliumWeb-Regular.ttf">
-      <Filter>Fonts</Filter>
-    </Font>
-    <Font Include="font\Titillium_Web\TitilliumWeb-SemiBold.ttf">
-      <Filter>Fonts</Filter>
-    </Font>
-    <Font Include="font\Titillium_Web\TitilliumWeb-SemiBoldItalic.ttf">
-      <Filter>Fonts</Filter>
-    </Font>
   </ItemGroup>
 </Project>

@@ -1,5 +1,4 @@
 ﻿#include "Piece.h"
-#include "NotImplementedError.h"
 #include "Resources.h"
 
 #include "boost\lexical_cast.hpp"
@@ -14,6 +13,8 @@ Piece::Piece(uint16_t pieceNumber, Player::Color color) :
     crownShape(),
     hidden(false),
     fieldMargin(),
+    xMovingTransition(),
+    yMovingTransition(),
     currentField(nullptr)
 {
 }
@@ -22,26 +23,35 @@ Piece::~Piece() {}
 
 void Piece::init()
 {
-    sf::Color color = sf::Color::White, crownColor = sf::Color::Yellow;
+    sf::Color color = Resources::WhitePieceColor;
     if (this->color == Player::Color::Black) {
-        color = sf::Color::Black;
+        color = Resources::BlackPieceColor;
     }
-    pieceShape.setRadius(0.5f);
+    pieceShape.setRadius(Resources::PieceShapeRadius);
     pieceShape.setFillColor(color);
 
-    crownShape.setRadius(0.2f);
-    crownShape.setFillColor(crownColor);
+    crownShape.setRadius(Resources::CrownShapeRadius);
+    crownShape.setFillColor(Resources::CrownColor);
 
     pieceName = boost::lexical_cast<std::string>(pieceId);
 
     descriptionText.setFont(Resources::DefaultFont);
     descriptionText.setString(pieceName);
-    descriptionText.setFillColor(sf::Color::Green);
+    descriptionText.setFillColor(Resources::DebugTextColor);
+
+    xMovingTransition.setEasingCurve(ShrinkedSin);
+    xMovingTransition.setLasting(Resources::PieceMoveLasting);
+    yMovingTransition.setEasingCurve(ShrinkedSin);
+    yMovingTransition.setLasting(Resources::PieceMoveLasting);
 }
 
-void Piece::update(sf::Time advance)
+void Piece::update(sf::Time time)
 {
-    throw NotImplementedError();
+    if (isMovingTransitionRunning()) {
+        float x = xMovingTransition.evaluate(time);
+        float y = yMovingTransition.evaluate(time);
+        setPosition(x, y);
+    }
 }
 
 void Piece::draw(sf::RenderTarget &renderTarget, sf::RenderStates states) const
@@ -51,13 +61,12 @@ void Piece::draw(sf::RenderTarget &renderTarget, sf::RenderStates states) const
     renderTarget.draw(pieceShape, states);
     if (pieceType == PieceType::King)
         renderTarget.draw(crownShape, states);
-    //renderTarget.draw(descriptionText, states);
 }
 
 void Piece::setPosition(const sf::Vector2f &position)
 {
     pieceShape.setPosition(position.x + fieldMargin, position.y + fieldMargin);
-    crownShape.setPosition(position.x + (0.5f - 0.2f), position.y + (0.5f - 0.2f));
+    crownShape.setPosition(position.x + (0.5f - crownShape.getRadius()), position.y + (0.5f - crownShape.getRadius()));
     descriptionText.setPosition(position.x + (0.5f - fieldMargin), position.y + (0.5f - fieldMargin));
     Transformable::setPosition(position);
 }
@@ -65,9 +74,34 @@ void Piece::setPosition(const sf::Vector2f &position)
 void Piece::setPosition(float x, float y)
 {
     pieceShape.setPosition(x + fieldMargin, y + fieldMargin);
-    crownShape.setPosition(x + (0.5f - 0.2f), y + (0.5f - 0.2f));
+    crownShape.setPosition(x + (0.5f - crownShape.getRadius()), y + (0.5f - crownShape.getRadius()));
     descriptionText.setPosition(x + (0.5f - fieldMargin), y + (0.5f - fieldMargin));
     Transformable::setPosition(x, y);
+}
+
+void Piece::transistToPosition(const sf::Vector2f &position, sf::Time startTime)
+{
+    transistToPosition(position.x, position.y, startTime);
+}
+
+void Piece::transistToPosition(float x, float y, sf::Time startTime)
+{
+    const sf::Vector2f &startPosition = this->getPosition();
+
+    float startX = startPosition.x;
+    xMovingTransition.setMinValue(startX);
+    xMovingTransition.setMaxValue(x);
+    xMovingTransition.setStartTime(startTime);
+
+    float startY = startPosition.y;
+    yMovingTransition.setMinValue(startY);
+    yMovingTransition.setMaxValue(y);
+    yMovingTransition.setStartTime(startTime);
+}
+
+bool Piece::isMovingTransitionRunning() const
+{
+    return !xMovingTransition.isFinished() || !yMovingTransition.isFinished();
 }
 
 Player::Color Piece::getColor() const
@@ -107,12 +141,22 @@ Piece::PieceType Piece::getPieceType() const
     return pieceType;
 }
 
-void Piece::promote()
+void Piece::upgrade()
 {
     pieceType = Piece::PieceType::King;
+}
+
+void Piece::downgrade()
+{
+    pieceType = Piece::PieceType::Man;
 }
 
 void Piece::hide()
 {
     hidden = true;
+}
+
+void Piece::show()
+{
+    hidden = false;
 }
