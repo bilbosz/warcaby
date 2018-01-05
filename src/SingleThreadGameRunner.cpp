@@ -33,7 +33,6 @@ void SingleThreadGameRunner::run()
         measureAfterUpdate = now();
 
         sleepDuration = nextUpdate - now();
-        sf::sleep(sleepDuration);
 
         measureBeforeRender = now();
         game->render();

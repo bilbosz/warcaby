@@ -57,6 +57,7 @@ void Draughts::init()
     renderWindow.setVerticalSyncEnabled(Resources::VerticalSync);
     renderWindow.setKeyRepeatEnabled(Resources::KeyRepeat);
     renderWindow.setMouseCursorGrabbed(Resources::MouseCursorGrab);
+	renderWindow.setFramerateLimit(Resources::UpdateRate);
 
     float viewHeight = static_cast<float>(sideFieldsNumber) + 2.0f;
 
