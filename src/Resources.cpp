@@ -27,9 +27,9 @@ namespace Resources
     sf::Time PieceMoveLasting(sf::milliseconds(500));
 
     std::string GameTitle("Warcaby");
-    size_t VideoModeNumber(0U);
+    size_t VideoModeNumber(2U);
     unsigned int AntialiasingLevel(1U);
-    sf::Uint32 WindowStyle(sf::Style::Fullscreen);
+    sf::Uint32 WindowStyle(sf::Style::Default);
     bool VerticalSync(true);
     bool KeyRepeat(true);
     bool MouseCursorGrab(false);
