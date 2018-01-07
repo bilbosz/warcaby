@@ -61,6 +61,10 @@ private:
 
 	std::list<Piece *> captures;
 
+    bool goodPiceSelected( Field* pressedField );
+    void MakeAMove( Field* pressedField );
+    void showPosibleSteps( Field *pressedField );
+
     void setPiecesPosition(std::experimental::filesystem::path file = std::experimental::filesystem::path());
 
     void retrieveEvents();

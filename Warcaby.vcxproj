@@ -142,6 +142,7 @@
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\GameObject.cpp" />
     <ClCompile Include="src\GameRunner.cpp" />
+    <ClCompile Include="src\HumanPlayer.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\NotImplementedError.cpp" />
     <ClCompile Include="src\Piece.cpp" />
@@ -160,6 +161,7 @@
     <ClInclude Include="src\Game.h" />
     <ClInclude Include="src\GameObject.h" />
     <ClInclude Include="src\GameRunner.h" />
+    <ClInclude Include="src\HumanPlayer.h" />
     <ClInclude Include="src\Macros.h" />
     <ClInclude Include="src\NotImplementedError.h" />
     <ClInclude Include="src\Piece.h" />

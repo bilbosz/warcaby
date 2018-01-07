@@ -250,62 +250,81 @@ void Draughts::retrieveEvents()
     }
 }
 
-void Draughts::mouseClickedOnBoard(const sf::Vector2f &pressPoint)
+void Draughts::mouseClickedOnBoard( const sf::Vector2f &pressPoint )
 {
-    Field *pressedField = board.getFieldByPosition(pressPoint);
-    // przyciśnięcie poza planszą
-    if (pressedField == nullptr)
+    Field *pressedField = board.getFieldByPosition( pressPoint );
+    if( pressedField == nullptr )
         return;
-    Field::Highlight pressedHighlight = pressedField->getHighlight();
-    // pole zaznaczone jako możliwe do wykonania ruchu
-    if (pressedHighlight == Field::Highlight::AvailableMove) {
-        // wyczyść zaznaczenie
-        board.clearSelection();
-        // wykonaj ruch
-        Field *earlierSelectedField = *currentTurn.rbegin();
-        Piece *earlierSelectedPiece = earlierSelectedField->getCurrentPiece();
-        // przemieść bierkę
-        earlierSelectedPiece->setCurrentField(pressedField);
-        earlierSelectedField->setCurrentPiece(nullptr);
-        pressedField->setCurrentPiece(earlierSelectedPiece);
-        earlierSelectedPiece->transistToPosition(pressedField->getPosition(), gameTime);
-        // zaznacz pole
-        currentTurn.push_back(pressedField);
-        narrowTurns();
-        if (narrowedTurns->nextStepList.empty()) {
-            // koniec tury
-            removeCapturesFromBoard();
-            promoteIfPossible();
-            changeTurn();
-            clearPossibleTurns();
-            addPossibleTurns();
-        } else {
-            // kontynuacja tury
-            highlightPossibleSteps();
-        }
-        return;
+
+    if( goodPiceSelected( pressedField ) )
+    {
+        showPosibleSteps( pressedField );
     }
+    else if( pressedField->getHighlight() == Field::Highlight::AvailableMove )
+    {
+        MakeAMove( pressedField );
+    }
+}
+
+//TODO zmienic nazwe
+void Draughts::showPosibleSteps( Field *pressedField )
+{
+    board.clearSelection();
+    currentTurn.clear();
+    currentTurn.push_back( pressedField );
+    // zaznacz pole
+    narrowTurns();
+    highlightPossibleSteps();
+    return;
+}
+
+//TODO można by zmienic nazwe tej metody
+bool Draughts::goodPiceSelected( Field* pressedField )
+{
     Piece *pressedPiece = pressedField->getCurrentPiece();
     // brak bierki
-    if (pressedPiece == nullptr)
-        return;
+    if( pressedPiece == nullptr )
+        return false;
+
     Player::Color pieceColor = pressedPiece->getColor();
     // bierka przeciwnika
-    if (pieceColor != whoseTurn)
-        return;
-    // pole nie zaznaczone jako możliwe do wykonania ruchu
-    if (pressedHighlight != Field::Highlight::AvailableMove) {
-        // jeśli zrobiono ruch
-        if (currentTurn.size() >= 2U)
-            return;
-        board.clearSelection();
-        currentTurn.clear();
-        currentTurn.push_back(pressedField);
-        // zaznacz pole
-        narrowTurns();
-        highlightPossibleSteps();
-        return;
+    if( pieceColor != whoseTurn )
+        return false;
+
+    return true;
+}
+
+//TODO zmienic nazwe
+void Draughts::MakeAMove( Field* pressedField )
+{
+    // wyczyść zaznaczenie
+    board.clearSelection();
+    // wykonaj ruch
+    Field *earlierSelectedField = *currentTurn.rbegin();
+    Piece *earlierSelectedPiece = earlierSelectedField->getCurrentPiece();
+    // przemieść bierkę
+    earlierSelectedPiece->setCurrentField( pressedField );
+    earlierSelectedField->setCurrentPiece( nullptr );
+    pressedField->setCurrentPiece( earlierSelectedPiece );
+    earlierSelectedPiece->transistToPosition( pressedField->getPosition(), gameTime );
+    // zaznacz pole
+    currentTurn.push_back( pressedField );
+    narrowTurns();
+    if( narrowedTurns->nextStepList.empty() )
+    {
+        // koniec tury
+        removeCapturesFromBoard();
+        promoteIfPossible();
+        changeTurn();
+        clearPossibleTurns();
+        addPossibleTurns();
     }
+    else
+    {
+        // kontynuacja tury
+        highlightPossibleSteps();
+    }
+    return;
 }
 
 void Draughts::addPossibleTurns()
