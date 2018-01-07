@@ -256,22 +256,17 @@ void Draughts::mouseClickedOnBoard( const sf::Vector2f &pressPoint )
     if( pressedField == nullptr )
         return;
 
-    Field::Highlight pressedHighlight = pressedField->getHighlight();
-
-    if( goodPiceSelected( pressedField ) || pressedHighlight == Field::Highlight::AvailableMove )
+    if( goodPiceSelected( pressedField ) )
     {
-        // pole zaznaczone jako możliwe do wykonania ruchu
-        if( pressedHighlight == Field::Highlight::AvailableMove )
-        {
-            MakeAMove( pressedField );
-        }
-        else
-        {
-            showPosibleSteps( pressedField );
-        }
+        showPosibleSteps( pressedField );
+    }
+    else if( pressedField->getHighlight() == Field::Highlight::AvailableMove )
+    {
+        MakeAMove( pressedField );
     }
 }
 
+//TODO zmienic nazwe
 void Draughts::showPosibleSteps( Field *pressedField )
 {
     board.clearSelection();
@@ -295,10 +290,11 @@ bool Draughts::goodPiceSelected( Field* pressedField )
     // bierka przeciwnika
     if( pieceColor != whoseTurn )
         return false;
-    
+
     return true;
 }
 
+//TODO zmienic nazwe
 void Draughts::MakeAMove( Field* pressedField )
 {
     // wyczyść zaznaczenie
