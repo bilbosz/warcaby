@@ -1,9 +1,3 @@
-# # exclude everything except directory foo/bar
-# /*
-# !/foo
-# /foo/*
-# !/foo/bar
-
 # ignoruj wszystko
 /*
 
@@ -12,27 +6,21 @@
 !/.gitignore
 !/README.md
 !/TODO.md
-!/Warcaby.vcxproj
-!/Warcaby.vcxproj.filters
-!/Warcaby.vcxproj.user
+!/CMakeLists.txt
 
-# i wskazanych folderów
-# build, bez zawartoœci
-!/build/
-/build/*
+# cmake z zawartoœci¹
+!/cmake/
+!/cmake/**
 
 # doc jedynie ze wskazanymi plikami
 !/doc/
 /doc/*
 !/doc/doxygen.conf
 !/doc/cppreference-doxygen-web.tag.xml
+!/doc/CMakeLists.txt
 !/doc/footer.html
 !/doc/header.html
 !/doc/sfml-doxygen-web.tag.xml
-
-# lib z zawartoœci¹
-!/lib/
-!/lib/**
 
 # res z zawartoœci¹
 !/res/

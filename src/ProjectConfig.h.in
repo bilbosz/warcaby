@@ -1,0 +1,23 @@
+﻿#define Warcaby_VERSION_MAJOR @Warcaby_VERSION_MAJOR@
+#define Warcaby_VERSION_MINOR @Warcaby_VERSION_MINOR@
+#define Warcaby_VERSION_PATCH @Warcaby_VERSION_PATCH@
+
+#cmakedefine Warcaby_DEBUG
+#ifdef Warcaby_DEBUG
+#   define DEBUG
+#endif
+
+#cmakedefine Warcaby_NO_CONSOLE
+#ifdef Warcaby_NO_CONSOLE
+#   define NO_CONSOLE
+#endif
+
+#cmakedefine Warcaby_CONSOLE_STOP
+#ifdef Warcaby_CONSOLE_STOP
+#   define CONSOLE_STOP
+#endif
+
+#cmakedefine Warcaby_FULLSCREEN
+#ifdef Warcaby_FULLSCREEN
+#   define FULLSCREEN
+#endif

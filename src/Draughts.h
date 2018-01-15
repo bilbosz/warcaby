@@ -1,20 +1,21 @@
 ﻿#pragma once
 
 #include "Board.h"
+#include "Cursor.h"
 #include "Game.h"
 #include "Resources.h"
 #include "StepTree.h"
 #include "Transition.h"
 
-#include "SFML\Graphics.hpp"
-#include "SFML\System.hpp"
+#include <SFML/Graphics.hpp>
+#include <SFML/System.hpp>
 
-#include <filesystem>
 #include <random>
 #include <set>
 
 class Field;
 class Piece;
+class Player;
 
 /** \brief Klasa implementująca grę w warcaby klasyczne. */
 class Draughts final : public Game
@@ -38,14 +39,18 @@ private:
     sf::View view;
     sf::Vector2f viewLeftTopCorner;
     sf::Text overlayText;
+    sf::Text bannerText;
     float fontScaleFactor;
+    Cursor cursor;
 
     bool isFinished_;
     bool gameOver;
-    Player::Color winner;
 
     uint16_t sideFieldsNumber;
     Board board;
+
+    Player *player1, *player2;
+    Player *winner;
 
     uint16_t playerPiecesRowsNumber;
     uint16_t piecesNumber;
@@ -53,15 +58,17 @@ private:
 
     float fieldMargin;
 
-    Player::Color whoseTurn;
+    Player *currentPlayer;
+    bool waitingForInteraction;
 
+    Piece *selectedPiece;
     std::list<Field *> currentTurn;
     std::map<Piece *, StepTree *> possibleTurns;
     StepTree *narrowedTurns;
 
-	std::list<Piece *> captures;
+    std::list<Piece *> captures;
 
-    void setPiecesPosition(std::experimental::filesystem::path file = std::experimental::filesystem::path());
+    void setPiecesPosition(std::string file = std::string());
 
     void retrieveEvents();
     void mouseClickedOnBoard(const sf::Vector2f &pressPosition);

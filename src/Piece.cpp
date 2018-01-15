@@ -1,7 +1,7 @@
 ﻿#include "Piece.h"
 #include "Resources.h"
 
-#include "boost\lexical_cast.hpp"
+#include <boost/lexical_cast.hpp>
 
 Piece::Piece(uint16_t pieceNumber, Player::Color color) :
     pieceId(pieceNumber),
@@ -35,9 +35,9 @@ void Piece::init()
 
     pieceName = boost::lexical_cast<std::string>(pieceId);
 
-    descriptionText.setFont(Resources::DefaultFont);
+    descriptionText.setFont(Resources::InfoFont);
     descriptionText.setString(pieceName);
-    descriptionText.setFillColor(Resources::DebugTextColor);
+    descriptionText.setFillColor(Resources::InfoTextColor);
 
     xMovingTransition.setEasingCurve(ShrinkedSin);
     xMovingTransition.setLasting(Resources::PieceMoveLasting);
@@ -65,17 +65,14 @@ void Piece::draw(sf::RenderTarget &renderTarget, sf::RenderStates states) const
 
 void Piece::setPosition(const sf::Vector2f &position)
 {
-    pieceShape.setPosition(position.x + fieldMargin, position.y + fieldMargin);
-    crownShape.setPosition(position.x + (0.5f - crownShape.getRadius()), position.y + (0.5f - crownShape.getRadius()));
-    descriptionText.setPosition(position.x + (0.5f - fieldMargin), position.y + (0.5f - fieldMargin));
-    Transformable::setPosition(position);
+    setPosition(position.x, position.y);
 }
 
 void Piece::setPosition(float x, float y)
 {
-    pieceShape.setPosition(x + fieldMargin, y + fieldMargin);
+    pieceShape.setPosition(x + (0.5f - pieceShape.getRadius()), y + (0.5f - pieceShape.getRadius()));
     crownShape.setPosition(x + (0.5f - crownShape.getRadius()), y + (0.5f - crownShape.getRadius()));
-    descriptionText.setPosition(x + (0.5f - fieldMargin), y + (0.5f - fieldMargin));
+    descriptionText.setPosition(x + fieldMargin, y + fieldMargin);
     Transformable::setPosition(x, y);
 }
 
@@ -112,7 +109,6 @@ Player::Color Piece::getColor() const
 void Piece::setFieldMargin(float margin)
 {
     fieldMargin = margin;
-    pieceShape.setRadius(0.5f - fieldMargin);
 }
 
 float Piece::getFieldMargin() const

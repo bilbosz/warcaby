@@ -2,7 +2,7 @@
 
 #include "GameRunner.h"
 
-#include "SFML\System.hpp"
+#include <SFML/System.hpp>
 
 #include <cstdint>
 

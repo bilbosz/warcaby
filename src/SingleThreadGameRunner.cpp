@@ -19,31 +19,11 @@ void SingleThreadGameRunner::init()
 
 void SingleThreadGameRunner::run()
 {
-    sf::Time lastUpdate = now(), nextUpdate = lastUpdate + updateTick, sleepDuration = sf::Time::Zero,
-             sleepAdjustment = sf::Time::Zero, delay = sf::Time::Zero;
-
-    sf::Time measureBeforeUpdate = sf::Time::Zero, measureAfterUpdate = sf::Time::Zero,
-             measureBeforeRender = sf::Time::Zero, measureAfterRender = sf::Time::Zero;
-
     while (true) {
-        measureBeforeUpdate = now();
-        game->update(nextUpdate);
+        game->update(gameClock.getElapsedTime());
         if (game->shouldFinish())
             break;
-        measureAfterUpdate = now();
-
-        sleepDuration = nextUpdate - now();
-
-        measureBeforeRender = now();
         game->render();
-        measureAfterRender = now();
-
-        game->gameMessages.str(std::string());
-        game->gameMessages.clear();
-        game->gameMessages << (measureAfterRender - lastUpdate).asMilliseconds() << std::endl;
-
-        lastUpdate = nextUpdate;
-        nextUpdate = lastUpdate + updateTick;
         ++updateNumber;
     }
     game->finish();

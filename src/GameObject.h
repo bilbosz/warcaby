@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "SFML\Graphics.hpp"
+#include <SFML/Graphics.hpp>
 
 /** \brief Reprezentacja rysowalnego obiektu w grze.
  *
