@@ -2,7 +2,7 @@
 
 #include "EasingCurve.h"
 
-#include <SFML\System.hpp>
+#include <SFML/System.hpp>
 
 class Transition
 {

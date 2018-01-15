@@ -1,8 +1,6 @@
 ﻿#pragma once
 
-#include "Field.h"
-#include "Piece.h"
-
+#include <cstdint>
 #include <list>
 
 class Field;

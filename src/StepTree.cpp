@@ -1,5 +1,8 @@
 ﻿#include "StepTree.h"
-#include "Macros.h"
+#include "Field.h"
+#include "Piece.h"
+
+#include <algorithm>
 
 StepTree::StepTree() : parent(nullptr), field(nullptr), capture(nullptr), capturesNumber(0U), isValid(false) {}
 
@@ -21,6 +24,8 @@ void StepTree::evalCapturesNumber()
 void StepTree::validate(uint16_t capturesNumber)
 {
     isValid = (capturesNumber == this->capturesNumber);
+    if (parent == nullptr)
+        isValid = (isValid && !nextStepList.empty());
     for (StepTree *subStep : nextStepList) {
         subStep->validate(capturesNumber);
     }

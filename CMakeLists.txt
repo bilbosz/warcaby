@@ -1,0 +1,108 @@
+﻿cmake_minimum_required(VERSION 3.7)
+
+option(Warcaby_DEBUG "Tryb debugowania" OFF)
+option(Warcaby_FULLSCREEN "Uruchamia program w trybie pełnoekranowym" ON)
+option(Warcaby_CONSOLE_STOP "Po wykonaniu programu czeka, aż użytkownik naciśnie przycisk" OFF)
+option(Warcaby_DOC "Generuje dokumentację Doxygen kodu źródłowego" OFF)
+
+set(SFML_REQUIRED_VERSION 2.1.0)
+set(Boost_REQUIRED_VERSION 1.55)
+
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules" ${CMAKE_MODULE_PATH})
+
+if (NOT DEFINED ${Warcaby_SFML_ROOT})
+    set(SFML_FIND_QUIETLY ON)
+    find_package(SFML ${SFML_REQUIRED_VERSION})
+    unset(SFML_ROOT)
+    if (SFML_FOUND)
+        get_filename_component(SFML_ROOT ${SFML_INCLUDE_DIR} DIRECTORY)
+    endif()
+endif()
+set(Warcaby_SFML_ROOT "${SFML_ROOT}" CACHE PATH "Ścieżka do katalogu głównego biblioteki SFML")
+unset(SFML_ROOT)
+unset(SFML_FIND_QUIETLY)
+
+if (NOT DEFINED ${Warcaby_Boost_ROOT})
+    set(Boost_FIND_QUIETLY ON)
+    find_package(Boost ${Boost_REQUIRED_VERSION})
+    unset(BOOST_ROOT)
+    if (Boost_FOUND)
+        set(Boost_ROOT ${Boost_INCLUDE_DIRS})
+    endif()
+endif()
+set(Warcaby_Boost_ROOT "${Boost_ROOT}" CACHE PATH "Ścieżka do katalogu głównego biblioteki Boost")
+unset(Boost_ROOT)
+unset(Boost_FIND_QUIETLY)
+
+set(CMAKE_BUILD_TYPE)
+if (Warcaby_DEBUG)
+    set(CMAKE_BUILD_TYPE Debug)
+else()
+    set(CMAKE_BUILD_TYPE Release)
+endif()
+
+project("Warcaby")
+
+set(Warcaby_VERSION_MAJOR 1)
+set(Warcaby_VERSION_MINOR 0)
+set(Warcaby_VERSION_PATCH 0)
+
+set(MAIN_TARGET "Warcaby")
+
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMake")
+set_property(DIRECTORY ${CMAKE_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT "${MAIN_TARGET}")
+
+configure_file(
+    "${CMAKE_SOURCE_DIR}/src/ProjectConfig.h.in"
+    "${CMAKE_BINARY_DIR}/ProjectConfig.h"
+)
+if (Warcaby_DOC)
+    add_subdirectory("${CMAKE_SOURCE_DIR}/doc")
+endif()
+file(COPY "${CMAKE_SOURCE_DIR}/res" DESTINATION "${CMAKE_BINARY_DIR}")
+
+include_directories("${CMAKE_BINARY_DIR}")
+
+set(SRCS)
+file(
+    GLOB SRCS
+    LIST_DICTIONARIES false 
+    "${CMAKE_SOURCE_DIR}/src/*.h"
+    "${CMAKE_SOURCE_DIR}/src/*.cpp"
+)
+
+
+add_executable(
+    ${MAIN_TARGET}
+    ${SRCS}
+)
+
+set(SFML_ROOT ${Warcaby_SFML_ROOT})
+set(SFML_STATIC_LIBRARIES FALSE)
+set(SFML_REQUIRED_MODULES system window graphics audio network)
+find_package(SFML ${SFML_REQUIRED_VERSION} REQUIRED ${SFML_REQUIRED_MODULES})
+if (SFML_FOUND)
+    include_directories(${SFML_INCLUDE_DIR})
+    target_link_libraries(${MAIN_TARGET} ${SFML_DEPENDENCIES} ${SFML_LIBRARIES})
+endif()
+
+get_filename_component(SFML_ROOT ${SFML_INCLUDE_DIR} DIRECTORY)
+set(SFML_BIN "${SFML_ROOT}/bin")
+set(SFML_DYNAMIC_LIBRARIES)
+file(
+    GLOB SFML_DYNAMIC_LIBRARIES
+    LIST_DICTIONARIES false 
+    "${SFML_BIN}/*.dll"
+)
+file(COPY ${SFML_DYNAMIC_LIBRARIES} DESTINATION ${PROJECT_BINARY_DIR})
+
+set(Boost_LIBRARY_DIR, ${Warcaby_Boost_ROOT})
+find_package(Boost ${Boost_REQUIRED_VERSION} REQUIRED)
+if(Boost_FOUND)
+  include_directories(${Boost_INCLUDE_DIRS})
+  target_link_libraries(${MAIN_TARGET} ${Boost_LIBRARIES})
+endif()

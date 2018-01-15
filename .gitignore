@@ -12,9 +12,7 @@
 !/.gitignore
 !/README.md
 !/TODO.md
-!/Warcaby.vcxproj
-!/Warcaby.vcxproj.filters
-!/Warcaby.vcxproj.user
+!/CMakeLists.txt
 
 # i wskazanych folderów
 # build, bez zawartoœci
@@ -29,10 +27,6 @@
 !/doc/footer.html
 !/doc/header.html
 !/doc/sfml-doxygen-web.tag.xml
-
-# lib z zawartoœci¹
-!/lib/
-!/lib/**
 
 # res z zawartoœci¹
 !/res/

@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "SFML\System.hpp"
+#include <SFML/System.hpp>
 
 #include <sstream>
 
@@ -17,6 +17,6 @@ public:
     virtual bool shouldFinish() const = 0;
     virtual void finish() = 0;
 
-	sf::Time gameTime;
+    sf::Time gameTime;
     std::ostringstream gameMessages;
 };

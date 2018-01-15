@@ -2,7 +2,7 @@
 
 #include "GameObject.h"
 
-#include "SFML\Graphics.hpp"
+#include <SFML/Graphics.hpp>
 
 class Piece;
 

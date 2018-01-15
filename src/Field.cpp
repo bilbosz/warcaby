@@ -1,7 +1,7 @@
 ﻿#include "Field.h"
 #include "Resources.h"
 
-#include "boost\format.hpp"
+#include <boost/format.hpp>
 
 Field::Field(uint16_t x, uint16_t y, Color color) :
     GameObject(),
@@ -36,8 +36,8 @@ void Field::init()
 
     fieldName = (boost::format("%c%d") % char(uint16_t('a') + boardPosition.x) % (boardPosition.y + 1)).str();
 
-    descriptionText.setFont(Resources::DefaultFont);
-    descriptionText.setFillColor(Resources::DebugTextColor);
+    descriptionText.setFont(Resources::InfoFont);
+    descriptionText.setFillColor(Resources::InfoTextColor);
     descriptionText.setString(fieldName);
 
     frameShape.setPoint(0U, sf::Vector2f(frameThickness, frameThickness));
@@ -49,10 +49,7 @@ void Field::init()
     frameShape.setOutlineColor(sf::Color::Transparent);
 }
 
-void Field::update(sf::Time time)
-{
-	
-}
+void Field::update(sf::Time time) {}
 
 void Field::draw(sf::RenderTarget &renderTarget, sf::RenderStates states) const
 {

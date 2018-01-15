@@ -4,7 +4,7 @@
 #include "Player.h"
 #include "Transition.h"
 
-#include "SFML\Graphics.hpp"
+#include <SFML/Graphics.hpp>
 
 class Field;
 
@@ -36,7 +36,7 @@ public:
     void setFieldMargin(float margin);
     float getFieldMargin() const;
 
-    void setFontScaleFactor(float scale);
+    void setFontScaleFactor(float scale) override;
 
     void setCurrentField(Field *field);
     Field *getCurrentField() const;
