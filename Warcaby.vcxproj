@@ -83,13 +83,13 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>D:\Library\boost_1_61_0;D:\Library\SFML-2.4.1\include;D:\Library\SDL2-2.0.7\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Kuba\Desktop\Projekt Grupowy - Warcaby\SDL2\include;C:\Users\Kuba\Desktop\Projekt Grupowy - Warcaby\SFML-2.4.2-windows-vc14-32-bit\SFML-2.4.2\include;C:\Users\Kuba\Desktop\Projekt Grupowy - Warcaby\boost_1_66_0\boost_1_66_0;D:\Library\boost_1_61_0;D:\Library\SFML-2.4.1\include;D:\Library\SDL2-2.0.7\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>false</MultiProcessorCompilation>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <EnableParallelCodeGeneration>false</EnableParallelCodeGeneration>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>D:\Library\boost_1_61_0\stage\lib;D:\Library\SFML-2.4.1\lib;D:\Library\SDL2-2.0.7\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>D:\Library\boost_1_61_0\stage\lib;D:\Library\SFML-2.4.1\lib;D:\Library\SDL2-2.0.7\lib\x86;C:\Users\Kuba\Desktop\Projekt Grupowy - Warcaby\SFML-2.4.2-windows-vc14-32-bit\SFML-2.4.2\lib;C:\Users\Kuba\Desktop\Projekt Grupowy - Warcaby\SDL2\lib\x86;C:\Users\Kuba\Desktop\Projekt Grupowy - Warcaby\boost_1_66_0\boost_1_66_0\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>sfml-graphics-d.lib;sfml-window-d.lib;sfml-system-d.lib;SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
