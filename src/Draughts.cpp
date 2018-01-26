@@ -2,11 +2,15 @@
 #include "ComputerPlayer.h"
 #include "Error.h"
 #include "HumanPlayer.h"
+#include "MenuOption.h"
+#include "MenuRedirection.h"
 #include "Piece.h"
 
 #include <algorithm>
 #include <fstream>
 
+#include <boost/bind.hpp>
+#include <boost/format.hpp>
 #include <boost/tokenizer.hpp>
 
 const sf::Vector2i Draughts::AllOffsets[Draughts::AllOffsetsNumber] = {
@@ -14,53 +18,43 @@ const sf::Vector2i Draughts::AllOffsets[Draughts::AllOffsetsNumber] = {
 };
 
 Draughts::Draughts() :
+    Game(),
     renderWindow(),
-    view(),
+    gameplayView(),
     viewLeftTopCorner(),
     overlayText(),
     bannerText(),
     fontScaleFactor(),
     cursor(),
-    isFinished_(false),
+    gameplayTexture(),
+    hudTexture(),
+    gameStarted(false),
     gameOver(false),
-    sideFieldsNumber(Resources::SideFieldsNumber),
-    board(sideFieldsNumber),
-    player1(new ComputerPlayer(Player::Color::White, &board)),
-    player2(new ComputerPlayer(Player::Color::Black, &board)),
+    isFinished_(false),
+    sideFieldsNumber(8U),
+    board(std::make_unique<Board>(sideFieldsNumber)),
+    player1(std::make_unique<HumanPlayer>(Player::Color::White, board.get())),
+    player2(std::make_unique<HumanPlayer>(Player::Color::Black, board.get())),
     winner(),
-    playerPiecesRowsNumber(Resources::PlayerPiecesRowsNumber),
+    playerPiecesRowsNumber(3U),
     piecesNumber(playerPiecesRowsNumber * 2 * sideFieldsNumber / 2),
     pieces(),
     fieldMargin(Resources::FieldMarginThickness),
-    currentPlayer(player1),
+    currentPlayer(nullptr),
     waitingForInteraction(false),
     selectedPiece(),
     currentTurn(),
     possibleTurns(),
     narrowedTurns(),
-    captures()
+    captures(),
+    mainMenu(std::make_unique<Menu>()),
+    newGameMenu(std::make_unique<Menu>()),
+    currentMenu(nullptr),
+    gameState(GameState::None)
 {
-    pieces = new Piece *[piecesNumber];
-    for (uint16_t i = 0U; i < piecesNumber; ++i) {
-        Player::Color color = Player::Color::White;
-        if (i >= piecesNumber / 2)
-            color = Player::Color::Black;
-        pieces[i] = new Piece(i, color);
-    }
 }
 
-Draughts::~Draughts()
-{
-    for (std::pair<Piece *, StepTree *> turnByPiece : possibleTurns) {
-        delete turnByPiece.second;
-    }
-    for (uint16_t i = 0U; i < piecesNumber; ++i) {
-        delete pieces[i];
-    }
-    delete[] pieces;
-    delete player1;
-    delete player2;
-}
+Draughts::~Draughts() {}
 
 void Draughts::init()
 {
@@ -71,148 +65,114 @@ void Draughts::init()
     }
     sf::ContextSettings settings;
     settings.antialiasingLevel = Resources::AntialiasingLevel;
+    renderWindow.setFramerateLimit(Resources::UpdateRate);
     renderWindow.setVerticalSyncEnabled(Resources::VerticalSync);
     renderWindow.setKeyRepeatEnabled(Resources::KeyRepeat);
     renderWindow.setMouseCursorGrabbed(Resources::MouseCursorGrab);
-    renderWindow.setFramerateLimit(Resources::UpdateRate);
 
-    float viewHeight = static_cast<float>(sideFieldsNumber) + 2.0f;
+    gameplayTexture.create(videoMode.width, videoMode.height);
+    hudTexture.create(videoMode.width, videoMode.height);
 
-    fontScaleFactor = viewHeight / videoMode.height;
+    createMenus();
+
+    gameState = GameState::Menu;
+    enterMainMenu();
 
     cursor.init();
 
-    view.setCenter((viewHeight - 2.0f) / 2.0f, (viewHeight - 2.0f) / 2.0f);
-    view.setSize(fontScaleFactor * videoMode.width, viewHeight);
-    view.setViewport(sf::FloatRect(0.0f, 0.0f, 1.0f, 1.0f));
-    viewLeftTopCorner.x = view.getCenter().x - view.getSize().x / 2.0f;
-    viewLeftTopCorner.y = view.getCenter().y - view.getSize().y / 2.0f;
-
-    board.init();
-    board.setPosition(0.0f, 0.0f);
-    board.setFontScaleFactor(fontScaleFactor);
-
-    std::list<Field *> blackFields = board.getFieldsByColor(Field::Color::Black);
-    for (uint16_t i = 0U; i < piecesNumber; ++i) {
-        Piece *piece = pieces[i];
-        piece->init();
-        piece->setFieldMargin(fieldMargin);
-        piece->setFontScaleFactor(fontScaleFactor);
-    }
-
-    setPiecesPosition(Resources::InitialBoardFile);
-
-    overlayText.setPosition(viewLeftTopCorner);
+    overlayText.setPosition(0.0f, 0.0f);
     overlayText.setFont(Resources::InfoFont);
     overlayText.setFillColor(Resources::InfoTextColor);
-    overlayText.setScale(fontScaleFactor, fontScaleFactor);
 
-    bannerText.setPosition(viewLeftTopCorner);
+    bannerText.setPosition(0.0f, 0.0f);
     bannerText.setFont(Resources::DefaultFont);
-    bannerText.setFillColor(Resources::BannerTextColor);
-    bannerText.setScale(fontScaleFactor, fontScaleFactor);
-    bannerText.setCharacterSize(Resources::BannerCharacterSize);
+    bannerText.setFillColor(Resources::MenuTitleColor);
+    bannerText.setCharacterSize(Resources::MenuCharacterSize);
 
-    addPossibleTurns();
-
-    // okno tworzymy jak najpóźniej, ustawiamy widok po stworzeniu okna
     renderWindow.create(videoMode, Resources::GameTitle, Resources::WindowStyle, settings);
     renderWindow.setMouseCursorVisible(false);
-    renderWindow.setView(view);
+
+    gameplayTexture.setView(gameplayView);
+    prepareGame();
 }
 
 void Draughts::update(sf::Time time)
 {
     Game::update(time);
+
     retrieveEvents();
-    sf::Vector2f cursorPosition = renderWindow.mapPixelToCoords(sf::Mouse::getPosition(renderWindow));
-    cursor.setPosition(cursorPosition);
-    board.update(time);
+
+    updateCursorPosition();
+    board->update(time);
+
+    // odśwież położenie bierek
     bool pieceMoving = false;
-    for (uint16_t i = 0U; i < piecesNumber; ++i) {
-        Piece *piece = pieces[i];
+    for (const std::unique_ptr<Piece> &piece : pieces) {
         piece->update(time);
         if (piece->isMovingTransitionRunning())
             pieceMoving = true;
     }
-    if (gameOver) {
-        sf::FloatRect bannerRect = bannerText.getGlobalBounds();
-        sf::Vector2f viewCenter = view.getCenter();
-        bannerText.setPosition(viewCenter.x - bannerRect.width / 2.0f, viewCenter.y - 1.5f * bannerRect.height / 2.0f);
-        return;
-    }
-    // sugestia: tutaj można gracza zablokować do momentu wykonania ruchu
-    if (pieceMoving && !currentPlayer->isInteractive())
-        return;
-    if (selectedPiece == nullptr) {
+    if (gameState == GameState::Menu) {
+        mainMenu->update(gameTime);
+    } else if (gameState == GameState::Gameplay) {
+        // gracz komputerowy czeka na koniec animacji
+        if (pieceMoving && !currentPlayer->isInteractive())
+            return;
         // nie wybrano bierki
-        selectedPiece = currentPlayer->getTurnPiece(possibleTurns);
-        if (selectedPiece != nullptr) {
-            Field *selectedField = selectedPiece->getCurrentField();
-            if (selectedField == nullptr)
-                throw Error("Zbita bierka użyta do wykonania ruchu");
-            currentTurn.push_back(selectedField);
-        }
-        narrowTurns();
-    } else {
-        // wybrano bierkę
-        StepTree *nextStep = currentPlayer->nextStep(selectedPiece, narrowedTurns);
-        if (nextStep != nullptr) {
-            Field *earlierSelectedField = currentTurn.back();
-            Field *nextField = nextStep->field;
-            // przemieść bierkę
-            selectedPiece->setCurrentField(nextField);
-            earlierSelectedField->setCurrentPiece(nullptr);
-            nextField->setCurrentPiece(selectedPiece);
-            selectedPiece->transistToPosition(nextField->getPosition(), gameTime);
-            // dodaj do listy kroków
-            currentTurn.push_back(nextField);
+        if (selectedPiece == nullptr) {
+            selectPiece();
             narrowTurns();
-            if (narrowedTurns->nextStepList.empty()) {
-                // koniec tury
-                removeCapturesFromBoard();
-                promoteIfPossible();
-                changeTurn();
-            }
+        } else {
+            makeStep();
         }
-    }
-    board.clearSelection();
-    if (currentPlayer->isInteractive()) {
-        highlightPossibleSteps();
+        board->clearSelection();
+        if (currentPlayer->isInteractive()) {
+            highlightPossibleSteps();
+        }
     }
 }
 
 void Draughts::render()
 {
+    gameplayTexture.clear(Resources::BackgroundColor);
+    hudTexture.clear(sf::Color::Transparent);
+    if (gameState == GameState::Gameplay || gameState == GameState::Menu) {
+        gameplayTexture.draw(*board);
+        // wszystkie zbite bierki
+        for (Piece *capture : captures) {
+            // bierka animowana
+            if (capture->isMovingTransitionRunning())
+                continue;
+            gameplayTexture.draw(*capture);
+        }
+        // wszystkie bierki, które się nie ruszają i nie są zbite
+        for (const std::unique_ptr<Piece> &piece : pieces) {
+            // bierka jest zbita
+            if (piece->getCurrentField() == nullptr)
+                continue;
+            if (piece->isMovingTransitionRunning())
+                continue;
+            gameplayTexture.draw(*piece);
+        }
+        // bierki animowane na górze (wyświetlane ostatnie)
+        for (const std::unique_ptr<Piece> &piece : pieces) {
+            if (!piece->isMovingTransitionRunning())
+                continue;
+            gameplayTexture.draw(*piece);
+        }
+        hudTexture.draw(bannerText);
+        if (gameState == GameState::Menu) {
+            hudTexture.draw(*currentMenu);
+        }
+    }
+    hudTexture.draw(overlayText);
+    hudTexture.draw(cursor);
     renderWindow.clear(Resources::BackgroundColor);
-    renderWindow.draw(board);
-    // wszystkie zbite bierki pod spodem
-    for (Piece *capture : captures) {
-        renderWindow.draw(*capture);
-    }
-    // wszystkie bierki, które się nie ruszają
-    for (uint16_t i = 0U; i < piecesNumber; ++i) {
-        Piece *piece = pieces[i];
-        // bierka jest zbita
-        if (piece->getCurrentField() == nullptr)
-            continue;
-        if (piece->isMovingTransitionRunning())
-            continue;
-        renderWindow.draw(*piece);
-    }
-    // bierki animowane na górze (wyświetlane ostatnie)
-    for (uint16_t i = 0U; i < piecesNumber; ++i) {
-        Piece *piece = pieces[i];
-        // bierka jest zbita
-        if (piece->getCurrentField() == nullptr)
-            continue;
-        if (!piece->isMovingTransitionRunning())
-            continue;
-        renderWindow.draw(*piece);
-    }
-    renderWindow.draw(bannerText);
-    renderWindow.draw(overlayText);
-    renderWindow.draw(cursor);
+    gameplayTexture.display();
+    hudTexture.display();
+    sf::Sprite gameplaySprite(gameplayTexture.getTexture()), hudSprite(hudTexture.getTexture());
+    renderWindow.draw(gameplaySprite);
+    renderWindow.draw(hudSprite);
     renderWindow.display();
 }
 
@@ -226,11 +186,165 @@ void Draughts::finish()
     renderWindow.close();
 }
 
-void Draughts::setPiecesPosition(std::string file)
+void Draughts::createMenus()
 {
-    std::list<Field *> blackFields = board.getFieldsByColor(Field::Color::Black);
+    // menu główne
+    mainMenu->init();
+    mainMenu->setTitle(Resources::GameTitle);
+
+    std::unique_ptr<MenuRedirection> newGameEntry = std::make_unique<MenuRedirection>(),
+                                     continueGameEntry = std::make_unique<MenuRedirection>(),
+                                     exitGameEntry = std::make_unique<MenuRedirection>();
+
+    newGameEntry->init();
+    newGameEntry->setName(L"Nowa gra");
+    newGameEntry->setTarget(boost::bind(boost::mem_fn(&Draughts::enterNewGameMenu), this));
+    mainMenu->addEntry(std::move(newGameEntry));
+
+    continueGameEntry->init();
+    continueGameEntry->setName(L"Kontynuuj");
+    continueGameEntry->setTarget(boost::bind(boost::mem_fn(&Draughts::startGame), this));
+    mainMenu->addEntry(std::move(continueGameEntry));
+    hideContinueEntry();
+    mainMenu->hideEntryByName(L"Kontynuuj");
+
+    exitGameEntry->init();
+    exitGameEntry->setName(L"Wyjdź z gry");
+    exitGameEntry->setTarget(boost::bind(boost::mem_fn(&Draughts::quit), this));
+    mainMenu->addEntry(std::move(exitGameEntry));
+
+    // menu nowej gry
+    newGameMenu->init();
+    newGameMenu->setTitle(L"Nowa gra");
+
+    std::unique_ptr<MenuRedirection> startGameEntry = std::make_unique<MenuRedirection>(),
+                                     backToMainMenuEntry = std::make_unique<MenuRedirection>();
+    std::unique_ptr<MenuOption> modeEntry = std::make_unique<MenuOption>(),
+                                whitePlayerEntry = std::make_unique<MenuOption>(),
+                                blackPlayerEntry = std::make_unique<MenuOption>();
+
+    startGameEntry->init();
+    startGameEntry->setName(L"Rozpocznij nową grę");
+    startGameEntry->setTarget(boost::bind(boost::mem_fn(&Draughts::startGame), this));
+    newGameMenu->addEntry(std::move(startGameEntry));
+
+    modeEntry->init();
+    modeEntry->setName(L"Tryb gry");
+    modeEntry->addValue(L"64 pola", boost::bind(boost::mem_fn(&Draughts::set8FieldMode), this));
+    modeEntry->addValue(L"100 pól", boost::bind(boost::mem_fn(&Draughts::set10FieldMode), this));
+    modeEntry->updateEntryText();
+    newGameMenu->addEntry(std::move(modeEntry));
+
+    whitePlayerEntry->init();
+    whitePlayerEntry->setName(L"Grający białymi");
+    whitePlayerEntry->addValue(L"Człowiek", [this]() -> void {
+        player1 = std::make_unique<HumanPlayer>(Player::Color::White, board.get());
+        prepareGame();
+    });
+    whitePlayerEntry->addValue(L"Komputer", [this]() -> void {
+        player1 = std::make_unique<ComputerPlayer>(Player::Color::White, board.get());
+        prepareGame();
+    });
+    whitePlayerEntry->updateEntryText();
+    newGameMenu->addEntry(std::move(whitePlayerEntry));
+
+    blackPlayerEntry->init();
+    blackPlayerEntry->setName(L"Grający czarnymi");
+    blackPlayerEntry->addValue(L"Człowiek", [this]() -> void {
+        player2 = std::make_unique<HumanPlayer>(Player::Color::Black, board.get());
+        prepareGame();
+    });
+    blackPlayerEntry->addValue(L"Komputer", [this]() -> void {
+        player2 = std::make_unique<ComputerPlayer>(Player::Color::Black, board.get());
+        prepareGame();
+    });
+    blackPlayerEntry->updateEntryText();
+    newGameMenu->addEntry(std::move(blackPlayerEntry));
+
+    backToMainMenuEntry->init();
+    backToMainMenuEntry->setName(L"Wróć do menu głównego");
+    backToMainMenuEntry->setTarget(boost::bind(boost::mem_fn(&Draughts::enterMainMenu), this));
+    newGameMenu->addEntry(std::move(backToMainMenuEntry));
+}
+
+void Draughts::recreateBoard()
+{
+    board = std::make_unique<Board>(sideFieldsNumber);
+    board->init();
+    board->setPosition(0.0f, 0.0f);
+    board->setFontScaleFactor(fontScaleFactor);
+}
+
+void Draughts::recreatePieces()
+{
+    pieces.clear();
+    pieces.resize(piecesNumber);
     for (uint16_t i = 0U; i < piecesNumber; ++i) {
-        Piece *piece = pieces[i];
+        Player::Color color = Player::Color::White;
+        if (i >= piecesNumber / 2)
+            color = Player::Color::Black;
+        pieces[i] = std::make_unique<Piece>(i, color);
+    }
+
+    for (const std::unique_ptr<Piece> &piece : pieces) {
+        piece->init();
+        piece->setFieldMargin(fieldMargin);
+        piece->setFontScaleFactor(fontScaleFactor);
+    }
+}
+
+void Draughts::prepareGame()
+{
+    hideContinueEntry();
+    gameOver = false;
+    winner = nullptr;
+    clearBannerText();
+    captures.clear();
+    selectedPiece = nullptr;
+    currentTurn.clear();
+    narrowedTurns = nullptr;
+    clearPossibleTurns();
+
+    piecesNumber = playerPiecesRowsNumber * 2 * sideFieldsNumber / 2;
+
+    recreateBoard();
+    recreatePieces();
+
+    const sf::Vector2u &renderWindowSize = renderWindow.getSize();
+    float gameplayViewHeight = static_cast<float>(sideFieldsNumber) + 2.0f;
+    fontScaleFactor = gameplayViewHeight / renderWindowSize.y;
+
+    gameplayView.setCenter((gameplayViewHeight - 2.0f) / 2.0f, (gameplayViewHeight - 2.0f) / 2.0f);
+    gameplayView.setSize(fontScaleFactor * renderWindowSize.x, gameplayViewHeight);
+    gameplayView.setViewport(sf::FloatRect(0.0f, 0.0f, 1.0f, 1.0f));
+    viewLeftTopCorner.x = gameplayView.getCenter().x - gameplayView.getSize().x / 2.0f;
+    viewLeftTopCorner.y = gameplayView.getCenter().y - gameplayView.getSize().y / 2.0f;
+    gameplayTexture.setView(gameplayView);
+
+    currentPlayer = player1.get();
+
+    setPiecesPosition();
+
+    addPossibleTurns();
+}
+
+void Draughts::startGame()
+{
+    gameState = GameState::Gameplay;
+    showContinueEntry();
+    clearBannerText();
+}
+
+void Draughts::updateCursorPosition()
+{
+    sf::Vector2f cursorPosition = hudTexture.mapPixelToCoords(sf::Mouse::getPosition(renderWindow));
+    cursor.setPosition(cursorPosition);
+}
+
+void Draughts::setPiecesPosition(const std::string &file)
+{
+    std::list<Field *> blackFields = board->getFieldsByColor(Field::Color::Black);
+    for (const std::unique_ptr<Piece> &piece : pieces) {
         if (blackFields.empty())
             throw Error("Bierek jest więcej niż pozycji");
         Field *field;
@@ -242,14 +356,13 @@ void Draughts::setPiecesPosition(std::string file)
             blackFields.pop_back();
         }
         piece->setCurrentField(field);
-        field->setCurrentPiece(piece);
+        field->setCurrentPiece(piece.get());
         piece->setPosition(field->getPosition());
     }
     if (file == std::string())
         return;
-    for (uint16_t i = 0U; i < piecesNumber; ++i) {
-        Piece *piece = pieces[i];
-        removeCapture(piece);
+    for (const std::unique_ptr<Piece> &piece : pieces) {
+        removeCapture(piece.get());
     }
     // działa tylko dla poprawnego tagu FEN pliku PDN, dla niepoprawnego mamy zachowanie niezdefiniowane
     std::ifstream fileStream(file);
@@ -264,11 +377,11 @@ void Draughts::setPiecesPosition(std::string file)
         Player::Color settingFor;
         bool king = false;
         if (token == "w") {
-            currentPlayer = player1;
+            currentPlayer = player1.get();
             continue;
         }
         if (token == "b") {
-            currentPlayer = player2;
+            currentPlayer = player2.get();
             continue;
         }
         std::string::const_iterator iter = token.cbegin(), iter2 = token.cend() - 2U;
@@ -287,8 +400,8 @@ void Draughts::setPiecesPosition(std::string file)
             king = true;
             ++iter;
         }
-        Field *field = board.getFieldByName(fieldName);
-        Piece *piece = pieces[pieceNumber];
+        Field *field = board->getFieldByName(fieldName);
+        Piece *piece = pieces[pieceNumber].get();
         piece->setCurrentField(field);
         field->setCurrentPiece(piece);
         piece->setPosition(field->getPosition());
@@ -303,30 +416,58 @@ void Draughts::retrieveEvents()
     sf::Event event;
     while (renderWindow.pollEvent(event)) {
         if (event.type == sf::Event::EventType::Closed) {
-            isFinished_ = true;
-        } else if (event.type == sf::Event::EventType::KeyPressed) {
-            if (event.key.code == sf::Keyboard::Escape) {
-                isFinished_ = true;
+            quit();
+            continue;
+        }
+        if (event.type == sf::Event::EventType::KeyPressed) {
+            if (event.key.alt && event.key.code == sf::Keyboard::F4) {
+                quit();
                 continue;
             }
             if (event.key.code == sf::Keyboard::F12) {
-                sf::Vector2u windowSize = renderWindow.getSize();
-                sf::Texture texture;
-                texture.create(windowSize.x, windowSize.y);
-                texture.update(renderWindow);
-                texture.copyToImage().saveToFile("screenshot.png");
+                makeScreenshot("screenshot.png");
                 continue;
             }
         }
-        if (gameOver)
-            continue;
-        if (!currentPlayer->isInteractive())
-            continue;
-        if (event.type == sf::Event::EventType::MouseButtonPressed) {
-            if (event.mouseButton.button == sf::Mouse::Left) {
-                sf::Vector2f pressPoint =
-                    renderWindow.mapPixelToCoords(sf::Vector2i(event.mouseButton.x, event.mouseButton.y));
-                mouseClickedOnBoard(pressPoint);
+        if (gameState == GameState::Menu) {
+            if (event.type == sf::Event::EventType::KeyPressed) {
+                if (event.key.code == sf::Keyboard::Escape) {
+                    if (!gameStarted)
+                        continue;
+                    startGame();
+                    continue;
+                }
+            }
+            if (event.type == sf::Event::EventType::MouseButtonPressed) {
+                if (event.mouseButton.button == sf::Mouse::Left) {
+                    sf::Vector2f pressPoint =
+                        hudTexture.mapPixelToCoords(sf::Vector2i(event.mouseButton.x, event.mouseButton.y));
+                    mouseClickedOnMenu(pressPoint);
+                }
+            } else if (event.type == sf::Event::EventType::MouseMoved) {
+                sf::Vector2f movePoint =
+                    hudTexture.mapPixelToCoords(sf::Vector2i(event.mouseMove.x, event.mouseMove.y));
+                mouseHoverOnMenu(movePoint);
+            }
+        } else if (gameState == GameState::Gameplay) {
+            if (event.type == sf::Event::EventType::KeyPressed) {
+                if (event.key.code == sf::Keyboard::Escape) {
+                    gameState = GameState::Menu;
+                    enterMainMenu();
+                    setBannerText(L"Pauza");
+                    continue;
+                }
+            }
+            if (gameOver)
+                continue;
+            if (!currentPlayer->isInteractive())
+                continue;
+            if (event.type == sf::Event::EventType::MouseButtonPressed) {
+                if (event.mouseButton.button == sf::Mouse::Left) {
+                    sf::Vector2f pressPoint =
+                        gameplayTexture.mapPixelToCoords(sf::Vector2i(event.mouseButton.x, event.mouseButton.y));
+                    mouseClickedOnBoard(pressPoint);
+                }
             }
         }
     }
@@ -334,8 +475,7 @@ void Draughts::retrieveEvents()
 
 void Draughts::mouseClickedOnBoard(const sf::Vector2f &pressPoint)
 {
-    Field *pressedField = board.getFieldByPosition(pressPoint);
-    // przyciśnięcie poza planszą
+    Field *pressedField = board->getFieldByPosition(pressPoint);
     if (pressedField == nullptr)
         return;
     if (!currentPlayer->isInteractive())
@@ -343,57 +483,81 @@ void Draughts::mouseClickedOnBoard(const sf::Vector2f &pressPoint)
     currentPlayer->fieldClicked(pressedField);
 }
 
+void Draughts::mouseClickedOnMenu(const sf::Vector2f &pressPosition)
+{
+    currentMenu->mouseClicked(pressPosition);
+}
+
+void Draughts::mouseHoverOnMenu(const sf::Vector2f &movePosition)
+{
+    currentMenu->mouseHovered(movePosition);
+}
+
+void Draughts::makeScreenshot(const std::string &path) const
+{
+    sf::Vector2u windowSize = renderWindow.getSize();
+    sf::Texture texture;
+    texture.create(windowSize.x, windowSize.y);
+    texture.update(renderWindow);
+    texture.copyToImage().saveToFile(path);
+}
+
+void Draughts::enterNewGameMenu()
+{
+    currentMenu = newGameMenu.get();
+    currentMenu->unselectAll();
+    prepareGame();
+}
+
+void Draughts::enterMainMenu()
+{
+    currentMenu = mainMenu.get();
+    currentMenu->unselectAll();
+}
+
+void Draughts::set8FieldMode()
+{
+    sideFieldsNumber = 8U;
+    playerPiecesRowsNumber = 3U;
+    prepareGame();
+}
+
+void Draughts::set10FieldMode()
+{
+    sideFieldsNumber = 10U;
+    playerPiecesRowsNumber = 4U;
+    prepareGame();
+}
+
 void Draughts::addPossibleTurns()
 {
-    for (uint16_t i = 0U; i < piecesNumber; ++i) {
-        Piece *piece = pieces[i];
-        // runda przeciwnika
+    for (const std::unique_ptr<Piece> &piece : pieces) {
         if (currentPlayer->getColor() != piece->getColor())
             continue;
         Field *field = piece->getCurrentField();
-        // bierka zbita
         if (field == nullptr)
             continue;
-        createPossibleEmptyTurn(piece);
-        addPossiblePieceMoves(piece);
-        addPossiblePieceJumps(piece);
+        createPossibleEmptyTurn(piece.get());
+        addPossiblePieceMoves(piece.get());
+        addPossiblePieceJumps(piece.get());
     }
     validatePossibleTurns();
     narrowedTurns = nullptr;
-    // jeśli wszystkie bierki nie mają ruchu zakończ
-    bool isValidStep = false;
-    for (std::pair<Piece *, StepTree *> turnByPiece : possibleTurns) {
-        const std::list<StepTree *> &nextStepList = turnByPiece.second->nextStepList;
-        for (StepTree *nextStep : nextStepList) {
-            if (nextStep->isValid) {
-                isValidStep = true;
-                break;
-            }
-        }
-        if (isValidStep)
-            break;
-    }
-    if (!isValidStep) {
-        winner = player1;
-        if (currentPlayer == player1)
-            winner = player2;
-        playerWon();
-        board.clearSelection();
+    if (isPossibleTurn())
         return;
-    }
+    playerWon();
+    board->clearSelection();
+    return;
 }
 
 void Draughts::clearPossibleTurns()
 {
-    for (std::pair<Piece *, StepTree *> turnByPiece : possibleTurns) {
-        delete turnByPiece.second;
-    }
     possibleTurns.clear();
 }
 
 void Draughts::createPossibleEmptyTurn(Piece *piece)
 {
-    possibleTurns[piece] = new StepTree();
+    possibleTurns[piece] = std::make_unique<StepTree>();
     possibleTurns[piece]->field = piece->getCurrentField();
 }
 
@@ -406,7 +570,7 @@ void Draughts::addPossiblePieceMoves(Piece *piece)
     int forwardDirection = 1;
     if (color == Player::Color::Black)
         forwardDirection = -1;
-    StepTree *previousStep = possibleTurns[piece];
+    StepTree *previousStep = possibleTurns[piece].get();
     if (pieceType == Piece::PieceType::Man) {
         const size_t forwardMovesOffsetsNumber = 2U;
         const sf::Vector2i forwardMovesOffsets[forwardMovesOffsetsNumber] = { sf::Vector2i(-1, forwardDirection),
@@ -414,11 +578,11 @@ void Draughts::addPossiblePieceMoves(Piece *piece)
         std::list<sf::Vector2i> forwardMoves;
         for (const sf::Vector2i &offset : forwardMovesOffsets) {
             sf::Vector2i targetBoardPosition(boardPosition + offset);
-            if (board.isBoardPositionInvalid(targetBoardPosition))
+            if (board->isBoardPositionInvalid(targetBoardPosition))
                 continue;
-            if (board.isBoardPositionOccupied(targetBoardPosition))
+            if (board->isBoardPositionOccupied(targetBoardPosition))
                 continue;
-            Field *targetField = board.getFieldByBoardPosition(targetBoardPosition);
+            Field *targetField = board->getFieldByBoardPosition(targetBoardPosition);
             StepTree *targetStep = new StepTree();
             targetStep->parent = previousStep;
             targetStep->field = targetField;
@@ -429,17 +593,17 @@ void Draughts::addPossiblePieceMoves(Piece *piece)
         for (const sf::Vector2i &directionOffset : AllOffsets) {
             for (int i = 1; i <= sideFieldsNumber; ++i) {
                 sf::Vector2i targetBoardPosition(boardPosition + i * directionOffset);
-                if (board.isBoardPositionInvalid(targetBoardPosition))
+                if (board->isBoardPositionInvalid(targetBoardPosition))
                     break;
-                if (board.isBoardPositionOccupied(targetBoardPosition))
+                if (board->isBoardPositionOccupied(targetBoardPosition))
                     break;
                 allDirectionMoves.push_back(targetBoardPosition);
             }
         }
         for (const sf::Vector2i &move : allDirectionMoves) {
-            if (board.isBoardPositionOccupied(move))
+            if (board->isBoardPositionOccupied(move))
                 continue;
-            Field *targetField = board.getFieldByBoardPosition(move);
+            Field *targetField = board->getFieldByBoardPosition(move);
             StepTree *targetStep = new StepTree();
             targetStep->parent = previousStep;
             targetStep->field = targetField;
@@ -452,7 +616,7 @@ void Draughts::addPossiblePieceJumps(Piece *piece)
 {
     Field *field = piece->getCurrentField();
     Piece::PieceType pieceType = piece->getPieceType();
-    StepTree *stepTree = possibleTurns[piece];
+    StepTree *stepTree = possibleTurns[piece].get();
     std::set<Piece *> captures;
     if (pieceType == Piece::PieceType::Man) {
         addPossibleManJumps(stepTree, captures, piece);
@@ -469,11 +633,11 @@ void Draughts::addPossibleManJumps(StepTree *currentStep, std::set<Piece *> &cur
                  startBoardPosition = startField->getBoardPostion();
     for (const sf::Vector2i &offset : AllOffsets) {
         sf::Vector2i attackPosition = lastBoardPosition + offset;
-        if (board.isBoardPositionInvalid(attackPosition))
+        if (board->isBoardPositionInvalid(attackPosition))
             continue;
-        if (!board.isBoardPositionOccupied(attackPosition))
+        if (!board->isBoardPositionOccupied(attackPosition))
             continue;
-        Field *attackField = board.getFieldByBoardPosition(attackPosition);
+        Field *attackField = board->getFieldByBoardPosition(attackPosition);
         Piece *attackPiece = attackField->getCurrentPiece();
         if (currentCaptures.find(attackPiece) != currentCaptures.end())
             continue;
@@ -481,11 +645,11 @@ void Draughts::addPossibleManJumps(StepTree *currentStep, std::set<Piece *> &cur
         if (attackColor == startColor)
             continue;
         sf::Vector2i targetPosition = lastBoardPosition + 2 * offset;
-        if (board.isBoardPositionInvalid(targetPosition))
+        if (board->isBoardPositionInvalid(targetPosition))
             continue;
-        if (targetPosition != startBoardPosition && board.isBoardPositionOccupied(targetPosition))
+        if (targetPosition != startBoardPosition && board->isBoardPositionOccupied(targetPosition))
             continue;
-        Field *targetField = board.getFieldByBoardPosition(targetPosition);
+        Field *targetField = board->getFieldByBoardPosition(targetPosition);
         StepTree *targetStep = new StepTree();
         targetStep->parent = currentStep;
         targetStep->field = targetField;
@@ -507,11 +671,11 @@ void Draughts::addPossibleKingJumps(StepTree *currentStep, std::set<Piece *> &cu
     for (const sf::Vector2i &offset : AllOffsets) {
         for (int i = 1; i < sideFieldsNumber; ++i) {
             sf::Vector2i attackPosition = lastBoardPosition + i * offset;
-            if (board.isBoardPositionInvalid(attackPosition))
+            if (board->isBoardPositionInvalid(attackPosition))
                 break;
-            if (!board.isBoardPositionOccupied(attackPosition))
+            if (!board->isBoardPositionOccupied(attackPosition))
                 continue;
-            Field *attackField = board.getFieldByBoardPosition(attackPosition);
+            Field *attackField = board->getFieldByBoardPosition(attackPosition);
             Piece *attackPiece = attackField->getCurrentPiece();
             if (std::find(currentCaptures.begin(), currentCaptures.end(), attackPiece) != currentCaptures.end())
                 break;
@@ -520,15 +684,15 @@ void Draughts::addPossibleKingJumps(StepTree *currentStep, std::set<Piece *> &cu
                 break;
             for (int j = i + 1; j < sideFieldsNumber; ++j) {
                 sf::Vector2i targetPosition = lastBoardPosition + j * offset;
-                if (board.isBoardPositionInvalid(targetPosition)) {
+                if (board->isBoardPositionInvalid(targetPosition)) {
                     break2 = true;
                     break;
                 }
-                if (targetPosition != startBoardPosition && board.isBoardPositionOccupied(targetPosition)) {
+                if (targetPosition != startBoardPosition && board->isBoardPositionOccupied(targetPosition)) {
                     break2 = true;
                     break;
                 }
-                Field *targetField = board.getFieldByBoardPosition(targetPosition);
+                Field *targetField = board->getFieldByBoardPosition(targetPosition);
                 StepTree *targetStep = new StepTree();
                 targetStep->parent = currentStep;
                 targetStep->field = targetField;
@@ -554,7 +718,7 @@ void Draughts::narrowTurns()
     }
     Field *currentField = currentTurn.back();
     if (currentTurn.size() == 1U) {
-        narrowedTurns = possibleTurns[currentField->getCurrentPiece()];
+        narrowedTurns = possibleTurns[currentField->getCurrentPiece()].get();
         return;
     }
     for (StepTree *step : narrowedTurns->nextStepList) {
@@ -563,29 +727,41 @@ void Draughts::narrowTurns()
             return;
         }
     }
-    throw Error("Nie można wykonanać tego kroku, nie ma go na liście możliwych pozycji");
 }
 
 void Draughts::validatePossibleTurns()
 {
     uint16_t maxCaptures = 0U;
-    for (std::pair<Piece *, StepTree *> turnByPiece : possibleTurns) {
-        StepTree *turn = turnByPiece.second;
+    for (std::pair<Piece *, const std::unique_ptr<StepTree> &> turnByPiece : possibleTurns) {
+        StepTree *turn = turnByPiece.second.get();
         turn->evalCapturesNumber();
         maxCaptures = std::max(maxCaptures, turn->capturesNumber);
     }
-    for (std::pair<Piece *, StepTree *> turnByPiece : possibleTurns) {
-        StepTree *turn = turnByPiece.second;
+    for (std::pair<Piece *, const std::unique_ptr<StepTree> &> turnByPiece : possibleTurns) {
+        StepTree *turn = turnByPiece.second.get();
         turn->validate(maxCaptures);
     }
 }
 
+bool Draughts::isPossibleTurn() const
+{
+    for (std::pair<Piece *, const std::unique_ptr<StepTree> &> turnByPiece : possibleTurns) {
+        const std::list<StepTree *> &nextStepList = turnByPiece.second->nextStepList;
+        for (StepTree *nextStep : nextStepList) {
+            if (nextStep->isValid) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 void Draughts::highlightPossibleSteps()
 {
-    board.clearSelection();
+    board->clearSelection();
     if (currentTurn.size() <= 0U) {
-        for (std::pair<Piece *, StepTree *> turnByPiece : possibleTurns) {
-            StepTree *firstStep = turnByPiece.second;
+        for (std::pair<Piece *, const std::unique_ptr<StepTree> &> turnByPiece : possibleTurns) {
+            StepTree *firstStep = turnByPiece.second.get();
             if (!firstStep->isValid)
                 continue;
             firstStep->field->setHighlight(Field::Highlight::AvailablePiece);
@@ -606,10 +782,10 @@ void Draughts::changeTurn()
 {
     selectedPiece = nullptr;
     currentPlayer->turnFinished();
-    if (currentPlayer == player1)
-        currentPlayer = player2;
+    if (currentPlayer == player1.get())
+        currentPlayer = player2.get();
     else
-        currentPlayer = player1;
+        currentPlayer = player1.get();
     currentTurn.clear();
     narrowedTurns = nullptr;
     clearPossibleTurns();
@@ -632,12 +808,11 @@ void Draughts::removeCapture(Piece *capture)
     Field *field = capture->getCurrentField();
     field->setCurrentPiece(nullptr);
     capture->setCurrentField(nullptr);
-    float viewWidth = view.getSize().x;
-    float boardWidth = board.getSize().x;
+    float viewWidth = gameplayView.getSize().x;
+    float boardWidth = board->getSize().x;
     float oneSideSpaceWidth = (viewWidth - boardWidth) / 2.0f;
-    float rightSideSpaceXOffset = boardWidth;
     float boardTop = 0.0f;
-    float boardBottom = board.getSize().y;
+    float boardBottom = board->getSize().y;
     float minX = boardWidth + Resources::BoardBorderSize - Resources::FieldMarginThickness,
           maxX = boardWidth + oneSideSpaceWidth - 1.0f + Resources::FieldMarginThickness,
           minY = boardTop - Resources::FieldMarginThickness,
@@ -650,19 +825,89 @@ void Draughts::removeCapture(Piece *capture)
 
 void Draughts::promoteIfPossible()
 {
-    uint16_t promotionLine = (currentPlayer->getColor() == Player::White ? sideFieldsNumber - 1U : 0U);
+    uint16_t promotionLine = (currentPlayer->getColor() == Player::Color::White ? sideFieldsNumber - 1U : 0U);
     Field *targetField = currentTurn.back();
     Piece *movedPiece = targetField->getCurrentPiece();
-    if (targetField->getBoardPostion().y == promotionLine)
+    if (targetField->getBoardPostion().y == promotionLine) {
         movedPiece->upgrade();
+    }
 }
 
 void Draughts::playerWon()
 {
     gameOver = true;
-    if (winner->getColor() == Player::Color::White) {
-        bannerText.setString(L"Biały gracz wygrał!");
-    } else {
-        bannerText.setString(L"Czarny gracz wygrał!");
+    hideContinueEntry();
+
+    winner = player1.get();
+    if (currentPlayer == player1.get()) {
+        winner = player2.get();
     }
+    if (winner->getColor() == Player::Color::White) {
+        setBannerText(L"Biały gracz wygrał!");
+    } else {
+        setBannerText(L"Czarny gracz wygrał!");
+    }
+    currentMenu = mainMenu.get();
+    gameState = GameState::Menu;
+}
+
+void Draughts::selectPiece()
+{
+    selectedPiece = currentPlayer->getTurnPiece(possibleTurns);
+    if (selectedPiece != nullptr) {
+        Field *selectedField = selectedPiece->getCurrentField();
+        currentTurn.push_back(selectedField);
+    }
+}
+
+void Draughts::makeStep()
+{
+    StepTree *nextStep = currentPlayer->nextStep(selectedPiece, narrowedTurns);
+    if (nextStep != nullptr) {
+        Field *earlierSelectedField = currentTurn.back();
+        Field *nextField = nextStep->field;
+
+        selectedPiece->setCurrentField(nextField);
+        earlierSelectedField->setCurrentPiece(nullptr);
+        nextField->setCurrentPiece(selectedPiece);
+        selectedPiece->transistToPosition(nextField->getPosition(), gameTime);
+
+        currentTurn.push_back(nextField);
+        narrowTurns();
+        if (narrowedTurns->nextStepList.empty()) {
+            removeCapturesFromBoard();
+            promoteIfPossible();
+            changeTurn();
+        }
+    }
+}
+
+void Draughts::setBannerText(const std::wstring &text)
+{
+    bannerText.setString(text);
+    sf::FloatRect bannerRect = bannerText.getGlobalBounds();
+    sf::Vector2f viewCenter = hudTexture.getView().getCenter();
+    bannerText.setPosition(viewCenter.x - bannerRect.width / 2.0f, viewCenter.y - 1.5f * bannerRect.height / 2.0f);
+}
+
+void Draughts::clearBannerText()
+{
+    bannerText.setString(std::wstring());
+}
+
+void Draughts::showContinueEntry()
+{
+    gameStarted = true;
+    mainMenu->showEntryByName(L"Kontynuuj");
+}
+
+void Draughts::hideContinueEntry()
+{
+    gameStarted = false;
+    mainMenu->hideEntryByName(L"Kontynuuj");
+}
+
+void Draughts::quit()
+{
+    isFinished_ = true;
 }

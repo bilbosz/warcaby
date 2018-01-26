@@ -15,7 +15,7 @@ class Field;
 class Piece final : public GameObject
 {
 public:
-    enum PieceType { Man = 0, King };
+    enum struct PieceType { Man = 0, King };
 
     Piece(uint16_t pieceNumber, Player::Color color);
     virtual ~Piece();

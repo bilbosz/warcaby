@@ -15,7 +15,7 @@ HumanPlayer::HumanPlayer(Player::Color color, Board *board) :
 
 HumanPlayer::~HumanPlayer() {}
 
-void HumanPlayer::fieldClicked(Field *field)
+void HumanPlayer::fieldClicked(Field * const field)
 {
     fieldClicked_ = field;
 }
@@ -26,7 +26,7 @@ void HumanPlayer::turnFinished()
     fieldClicked_ = nullptr;
 }
 
-Piece *HumanPlayer::getTurnPiece(const std::map<Piece *, StepTree *> &possibleTurns)
+Piece *HumanPlayer::getTurnPiece(const std::map<Piece *, std::unique_ptr<StepTree>> &possibleTurns)
 {
     if (fieldClicked_ == nullptr)
         return nullptr;
@@ -49,7 +49,7 @@ StepTree *HumanPlayer::nextStep(Piece *const movingPiece, StepTree *const narrow
         return nullptr;
     const std::list<StepTree *> &possibleNextSteps = narrowedTurns->nextStepList;
     for (StepTree *step : possibleNextSteps) {
-        if (step->field == fieldClicked_)
+        if (step->field == fieldClicked_ && step->isValid)
             return step;
     }
     return nullptr;

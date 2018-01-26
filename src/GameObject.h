@@ -17,8 +17,12 @@ public:
     virtual void update(sf::Time time) = 0;
     virtual void draw(sf::RenderTarget &renderTarget, sf::RenderStates states) const = 0;
 
-    virtual void setSize(const sf::Vector2f &size);
+	virtual void setPosition(float x, float y);
+	virtual void setPosition(const sf::Vector2f &position);
+	virtual sf::Vector2f getPosition() const;
+
     virtual void setSize(float w, float h);
+    virtual void setSize(const sf::Vector2f &size);
     virtual sf::Vector2f getSize() const;
 
     virtual void setFontScaleFactor(float scale);

@@ -11,19 +11,21 @@ namespace Resources
     extern sf::Font InfoFont, 
 		DefaultFont;
 
-    extern const sf::Color InfoTextColor, 
-		BannerTextColor, 
-		BackgroundColor, 
-		BoardColor, 
-		BlackFieldColor, 
-		WhiteFieldColor, 
-		SelectedFieldColor, 
-		AvailableFieldColor, 
+	extern const sf::Color InfoTextColor,
+		MenuTitleColor,
+		BackgroundColor,
+		BoardColor,
+		BlackFieldColor,
+		WhiteFieldColor,
+		SelectedFieldColor,
+		AvailableFieldColor,
 		AvailablePieceFieldColor,
-		BlackPieceColor, 
+		BlackPieceColor,
 		WhitePieceColor,
 		CursorColor,
-		CrownColor;
+		CrownColor,
+		MenuUnselectedEntryColor,
+		MenuSelectedEntryColor;
 
     extern const uint16_t SideFieldsNumber, 
 		PlayerPiecesRowsNumber;
@@ -34,13 +36,14 @@ namespace Resources
 		PieceShapeRadius, 
 		CrownShapeRadius;
     extern const sf::Time PieceMoveLasting;
-    extern const unsigned int BannerCharacterSize;
 
-    extern const std::string GameTitle;
+    extern const std::wstring GameTitle;
     extern const bool IsFullscreen;
     extern const sf::Uint32 WindowStyle;
 	extern const float WindowDesktopWidthRatio, 
 		WindowDesktopHeightRatio;
+    extern const unsigned int MenuCharacterSize,
+		MenuEntryCharacterSize;
     extern const unsigned int AntialiasingLevel;
     extern const bool VerticalSync, 
 		KeyRepeat, 
