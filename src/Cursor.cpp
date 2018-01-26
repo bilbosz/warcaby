@@ -1,4 +1,4 @@
-#include "Cursor.h"
+﻿#include "Cursor.h"
 #include "Resources.h"
 
 Cursor::Cursor() : GameObject(), upperTriangle(3U), lowerTriangle(3U) {}
@@ -8,13 +8,13 @@ Cursor::~Cursor() {}
 void Cursor::init()
 {
     upperTriangle.setPoint(0U, sf::Vector2f(0.0f, 0.0f));
-    upperTriangle.setPoint(1U, sf::Vector2f(0.5f, 0.3f));
-    upperTriangle.setPoint(2U, sf::Vector2f(0.3f, 0.3f));
+    upperTriangle.setPoint(1U, sf::Vector2f(50.0f, 30.0f));
+    upperTriangle.setPoint(2U, sf::Vector2f(30.0f, 30.0f));
     upperTriangle.setFillColor(Resources::CursorColor);
 
     lowerTriangle.setPoint(0U, sf::Vector2f(0.0f, 0.0f));
-    lowerTriangle.setPoint(1U, sf::Vector2f(0.3f, 0.3f));
-    lowerTriangle.setPoint(2U, sf::Vector2f(0.3f, 0.5f));
+    lowerTriangle.setPoint(1U, sf::Vector2f(30.0f, 30.0f));
+    lowerTriangle.setPoint(2U, sf::Vector2f(30.0f, 50.0f));
     lowerTriangle.setFillColor(Resources::CursorColor);
 }
 

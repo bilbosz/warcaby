@@ -58,32 +58,44 @@ set_property(DIRECTORY ${CMAKE_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT "${MAIN_T
 
 configure_file(
     "${CMAKE_SOURCE_DIR}/src/ProjectConfig.h.in"
-    "${CMAKE_BINARY_DIR}/ProjectConfig.h"
+    "${CMAKE_BINARY_DIR}/config/ProjectConfig.h"
 )
+include_directories("${CMAKE_BINARY_DIR}/config")
+
 if (Warcaby_DOC)
     add_subdirectory("${CMAKE_SOURCE_DIR}/doc")
 endif()
+set(RES "${CMAKE_SOURCE_DIR}/res")
 file(COPY "${CMAKE_SOURCE_DIR}/res" DESTINATION "${CMAKE_BINARY_DIR}")
 
-include_directories("${CMAKE_BINARY_DIR}")
-
-set(SRCS)
+set(SRC)
 file(
-    GLOB SRCS
+    GLOB SRC
     LIST_DICTIONARIES false 
     "${CMAKE_SOURCE_DIR}/src/*.h"
     "${CMAKE_SOURCE_DIR}/src/*.cpp"
 )
 
+if (${CMAKE_SYSTEM_NAME} STREQUAL Windows)
+	add_executable(
+		${MAIN_TARGET}
+		WIN32
+		${SRC}
+	)
+elseif()
+	add_executable(
+		${MAIN_TARGET}
+		${SRC}
+	)
+endif()
 
-add_executable(
-    ${MAIN_TARGET}
-    ${SRCS}
-)
 
 set(SFML_ROOT ${Warcaby_SFML_ROOT})
 set(SFML_STATIC_LIBRARIES FALSE)
 set(SFML_REQUIRED_MODULES system window graphics audio network)
+if (${CMAKE_SYSTEM_NAME} STREQUAL Windows)
+	set(SFML_REQUIRED_MODULES ${SFML_REQUIRED_MODULES} main)
+endif()
 find_package(SFML ${SFML_REQUIRED_VERSION} REQUIRED ${SFML_REQUIRED_MODULES})
 if (SFML_FOUND)
     include_directories(${SFML_INCLUDE_DIR})
@@ -95,10 +107,10 @@ set(SFML_BIN "${SFML_ROOT}/bin")
 set(SFML_DYNAMIC_LIBRARIES)
 file(
     GLOB SFML_DYNAMIC_LIBRARIES
-    LIST_DICTIONARIES false 
+    LIST_DICTIONARIES false
     "${SFML_BIN}/*.dll"
 )
-file(COPY ${SFML_DYNAMIC_LIBRARIES} DESTINATION ${PROJECT_BINARY_DIR})
+file(COPY ${SFML_DYNAMIC_LIBRARIES} DESTINATION "${CMAKE_BINARY_DIR}")
 
 set(Boost_LIBRARY_DIR, ${Warcaby_Boost_ROOT})
 find_package(Boost ${Boost_REQUIRED_VERSION} REQUIRED)
@@ -106,3 +118,26 @@ if(Boost_FOUND)
   include_directories(${Boost_INCLUDE_DIRS})
   target_link_libraries(${MAIN_TARGET} ${Boost_LIBRARIES})
 endif()
+
+file(
+	GLOB Warcaby_DYNAMIC_LIBRARIES
+	LIST_DICTIONARIES false
+	"${CMAKE_BINARY_DIR}/*.dll"
+	EXCLUDE
+)
+
+install(TARGETS "${MAIN_TARGET}" DESTINATION ".")
+foreach(Warcaby_DYNAMIC_LIBRARY IN ITEMS ${Warcaby_DYNAMIC_LIBRARIES})
+	if(NOT (Warcaby_DYNAMIC_LIBRARY MATCHES ".+-d-[0-9]+\\.dll"))
+		install(FILES "${Warcaby_DYNAMIC_LIBRARY}" DESTINATION ".")
+	endif()
+endforeach(Warcaby_DYNAMIC_LIBRARY)
+install(DIRECTORY "${RES}" DESTINATION ".")
+
+include(InstallRequiredSystemLibraries)
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.txt")
+set(CPACK_PACKAGE_VERSION_MAJOR "${Warcaby_VERSION_MAJOR}")
+set(CPACK_PACKAGE_VERSION_MINOR "${Warcaby_VERSION_MINOR}")
+set(CPACK_PACKAGE_VERSION_PATCH "${Warcaby_VERSION_PATCH}")
+set(CPACK_MONOLITHIC_INSTALL 1)
+include(CPack)

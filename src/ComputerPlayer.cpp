@@ -3,7 +3,6 @@
 #include "Resources.h"
 #include "StepTree.h"
 
-#include <array>
 #include <random>
 
 ComputerPlayer::ComputerPlayer(Player::Color color, Board *board) : Player(color, board), turnPiece(nullptr) {}
@@ -15,11 +14,11 @@ void ComputerPlayer::turnFinished()
     turnPiece = nullptr;
 }
 
-Piece *ComputerPlayer::getTurnPiece(const std::map<Piece *, StepTree *> &possibleTurns)
+Piece *ComputerPlayer::getTurnPiece(const std::map<Piece *, std::unique_ptr<StepTree>> &possibleTurns)
 {
     std::vector<Piece *> possiblePieces;
-    for (std::pair<Piece *, StepTree *> turnByPiece : possibleTurns) {
-        StepTree *turn = turnByPiece.second;
+    for (std::pair<Piece *, const std::unique_ptr<StepTree> &> turnByPiece : possibleTurns) {
+        StepTree *turn = turnByPiece.second.get();
         if (turn->isValid)
             possiblePieces.push_back(turnByPiece.first);
     }

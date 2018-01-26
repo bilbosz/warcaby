@@ -4,6 +4,7 @@
 # oprócz wskazanych plików
 !/.clang-format
 !/.gitignore
+!/LICENSE.txt
 !/README.md
 !/TODO.md
 !/CMakeLists.txt

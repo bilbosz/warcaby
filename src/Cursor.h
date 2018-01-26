@@ -5,7 +5,7 @@
 class Cursor final : public GameObject
 {
 public:
-    enum State { Normal, Pressed };
+    enum struct State { Normal, Pressed };
 
     Cursor();
     virtual ~Cursor();

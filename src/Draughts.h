@@ -3,6 +3,7 @@
 #include "Board.h"
 #include "Cursor.h"
 #include "Game.h"
+#include "Menu.h"
 #include "Resources.h"
 #include "StepTree.h"
 #include "Transition.h"
@@ -10,7 +11,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 
-#include <random>
+#include <memory>
 #include <set>
 
 class Field;
@@ -21,6 +22,8 @@ class Player;
 class Draughts final : public Game
 {
 public:
+    enum struct GameState { None = 0, Menu, Gameplay };
+
     Draughts();
     virtual ~Draughts();
 
@@ -36,25 +39,29 @@ private:
     static const sf::Vector2i AllOffsets[AllOffsetsNumber];
 
     sf::RenderWindow renderWindow;
-    sf::View view;
+    sf::View gameplayView;
     sf::Vector2f viewLeftTopCorner;
     sf::Text overlayText;
     sf::Text bannerText;
     float fontScaleFactor;
     Cursor cursor;
+    sf::RenderTexture gameplayTexture;
+    sf::RenderTexture hudTexture;
 
-    bool isFinished_;
+    bool gameStarted;
     bool gameOver;
+    bool isFinished_;
 
     uint16_t sideFieldsNumber;
-    Board board;
+    std::unique_ptr<Board> board;
 
-    Player *player1, *player2;
+    std::unique_ptr<Player> player1, player2;
     Player *winner;
 
     uint16_t playerPiecesRowsNumber;
     uint16_t piecesNumber;
-    Piece **pieces;
+
+    std::vector<std::unique_ptr<Piece>> pieces;
 
     float fieldMargin;
 
@@ -63,15 +70,36 @@ private:
 
     Piece *selectedPiece;
     std::list<Field *> currentTurn;
-    std::map<Piece *, StepTree *> possibleTurns;
+    std::map<Piece *, std::unique_ptr<StepTree>> possibleTurns;
     StepTree *narrowedTurns;
 
     std::list<Piece *> captures;
 
-    void setPiecesPosition(std::string file = std::string());
+    std::unique_ptr<Menu> mainMenu, newGameMenu;
+    Menu *currentMenu;
+
+    GameState gameState;
+
+    void createMenus();
+    void recreateBoard();
+    void recreatePieces();
+    void prepareGame();
+    void startGame();
+
+    void updateCursorPosition();
+
+    void setPiecesPosition(const std::string &file = std::string());
 
     void retrieveEvents();
     void mouseClickedOnBoard(const sf::Vector2f &pressPosition);
+    void mouseClickedOnMenu(const sf::Vector2f &pressPosition);
+    void mouseHoverOnMenu(const sf::Vector2f &movePosition);
+    void makeScreenshot(const std::string &path) const;
+
+    void enterNewGameMenu();
+    void enterMainMenu();
+    void set8FieldMode();
+    void set10FieldMode();
 
     void addPossibleTurns();
     void clearPossibleTurns();
@@ -83,6 +111,7 @@ private:
 
     void narrowTurns();
     void validatePossibleTurns();
+    bool isPossibleTurn() const;
 
     void highlightPossibleSteps();
 
@@ -91,4 +120,13 @@ private:
     void removeCapture(Piece *capture);
     void promoteIfPossible();
     void playerWon();
+    void selectPiece();
+    void makeStep();
+
+    void setBannerText(const std::wstring &text);
+    void clearBannerText();
+    void showContinueEntry();
+    void hideContinueEntry();
+
+    void quit();
 };

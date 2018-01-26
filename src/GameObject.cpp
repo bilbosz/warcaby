@@ -4,15 +4,30 @@ GameObject::GameObject() : size(), fontScaleFactor(1.0f) {}
 
 GameObject::~GameObject() {}
 
-void GameObject::setSize(const sf::Vector2f &size)
+void GameObject::setPosition(float x, float y)
 {
-    this->size = size;
+	Transformable::setPosition(x, y);
+}
+
+void GameObject::setPosition(const sf::Vector2f &position)
+{
+	setPosition(position.x, position.y);
+}
+
+sf::Vector2f GameObject::getPosition() const
+{
+	return Transformable::getPosition();
 }
 
 void GameObject::setSize(float w, float h)
 {
     size.x = w;
     size.y = h;
+}
+
+void GameObject::setSize(const sf::Vector2f &size)
+{
+    this->size = size;
 }
 
 sf::Vector2f GameObject::getSize() const
