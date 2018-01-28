@@ -76,8 +76,8 @@ void Draughts::init()
 
     createMenus();
 
-    gameState = GameState::Menu;
-    enterMainMenu();
+    gameState = GameState::Menu; 
+	currentMenu = mainMenu.get();
 
     cursor.init();
 
@@ -332,6 +332,8 @@ void Draughts::prepareGame()
 void Draughts::startGame()
 {
     gameState = GameState::Gameplay;
+	currentMenu->unselectAll();
+	currentMenu = mainMenu.get();
     showContinueEntry();
     clearBannerText();
 }
@@ -505,15 +507,15 @@ void Draughts::makeScreenshot(const std::string &path) const
 
 void Draughts::enterNewGameMenu()
 {
-    currentMenu = newGameMenu.get();
     currentMenu->unselectAll();
+    currentMenu = newGameMenu.get();
     prepareGame();
 }
 
 void Draughts::enterMainMenu()
 {
-    currentMenu = mainMenu.get();
     currentMenu->unselectAll();
+    currentMenu = mainMenu.get();
 }
 
 void Draughts::set8FieldMode()
