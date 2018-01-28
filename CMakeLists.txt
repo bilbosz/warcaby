@@ -25,7 +25,7 @@ unset(SFML_FIND_QUIETLY)
 if (NOT DEFINED ${Warcaby_Boost_ROOT})
     set(Boost_FIND_QUIETLY ON)
     find_package(Boost ${Boost_REQUIRED_VERSION})
-    unset(BOOST_ROOT)
+    unset(Boost_ROOT)
     if (Boost_FOUND)
         set(Boost_ROOT ${Boost_INCLUDE_DIRS})
     endif()
@@ -45,7 +45,7 @@ project("Warcaby")
 
 set(Warcaby_VERSION_MAJOR 1)
 set(Warcaby_VERSION_MINOR 0)
-set(Warcaby_VERSION_PATCH 0)
+set(Warcaby_VERSION_PATCH 1)
 
 set(MAIN_TARGET "Warcaby")
 
@@ -112,7 +112,7 @@ file(
 )
 file(COPY ${SFML_DYNAMIC_LIBRARIES} DESTINATION "${CMAKE_BINARY_DIR}")
 
-set(Boost_LIBRARY_DIR, ${Warcaby_Boost_ROOT})
+set(BOOST_ROOT ${Warcaby_Boost_ROOT})
 find_package(Boost ${Boost_REQUIRED_VERSION} REQUIRED)
 if(Boost_FOUND)
   include_directories(${Boost_INCLUDE_DIRS})

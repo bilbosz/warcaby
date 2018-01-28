@@ -58,8 +58,9 @@ Draughts::~Draughts() {}
 
 void Draughts::init()
 {
-    sf::VideoMode videoMode = sf::VideoMode::getDesktopMode();
+	sf::VideoMode videoMode = sf::VideoMode::getFullscreenModes()[0];
     if (!Resources::IsFullscreen) {
+	    videoMode = sf::VideoMode::getDesktopMode();
         videoMode.width = static_cast<unsigned int>(videoMode.width * Resources::WindowDesktopWidthRatio);
         videoMode.height = static_cast<unsigned int>(videoMode.height * Resources::WindowDesktopHeightRatio);
     }
