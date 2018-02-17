@@ -19,10 +19,15 @@ void SingleThreadGameRunner::init()
 
 void SingleThreadGameRunner::run()
 {
+    sf::Time beforeRender = gameClock.getElapsedTime();
     while (true) {
         game->update(gameClock.getElapsedTime());
-        if (game->shouldFinish())
+        if (game->shouldFinish()) {
             break;
+        }
+        while (gameClock.getElapsedTime() < beforeRender + updateTick)
+            ;
+        beforeRender = gameClock.getElapsedTime();
         game->render();
         ++updateNumber;
     }

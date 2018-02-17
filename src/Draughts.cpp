@@ -427,10 +427,6 @@ void Draughts::retrieveEvents()
                 quit();
                 continue;
             }
-            if (event.key.code == sf::Keyboard::F12) {
-                makeScreenshot("screenshot.png");
-                continue;
-            }
         }
         if (gameState == GameState::Menu) {
             if (event.type == sf::Event::EventType::KeyPressed) {
