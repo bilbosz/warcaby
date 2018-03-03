@@ -45,7 +45,7 @@ project("Warcaby")
 
 set(Warcaby_VERSION_MAJOR 1)
 set(Warcaby_VERSION_MINOR 0)
-set(Warcaby_VERSION_PATCH 2)
+set(Warcaby_VERSION_PATCH 3)
 
 set(MAIN_TARGET "Warcaby")
 
